@@ -136,7 +136,7 @@ class Conf (object):
 		'edge dist': 110
 	}
 	ASTEROID_LAUNCH_SPEED = 100
-	ASTEROID_LAUNCH_DIST = 10 # from player
+	ASTEROID_LAUNCH_DIST = 25 # from player
 	ASTEROID_LAUNCH_GAP = 5 # seconds
 
 

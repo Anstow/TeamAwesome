@@ -5,6 +5,7 @@ from ext import evthandler as eh
 import pygame as pg
 
 from conf import conf
+from util import Vect
 from world import World
 import gm
 from planet import Planet, Sun, Asteroid
@@ -35,7 +36,9 @@ class Player (Planet):
 			if mode == 1 and self._since_last_launch >= conf.ASTEROID_LAUNCH_GAP:
 				# fire asteroid
 				angle = self.aiming_angle[mode]
-				a = Asteroid(self.pos, (self.launch_speed * cos(angle), self.launch_speed * sin(angle)))
+				pos = self.pos + Vect(conf.ASTEROID_LAUNCH_DIST, 0).rotate(angle)
+				vel = (self.launch_speed * cos(angle), self.launch_speed * sin(angle))
+				a = Asteroid(pos, vel)
 				self.world.add_ast(a)
 				self._since_last_launch -= conf.ASTEROID_LAUNCH_GAP
 		self._fire_last[mode] = now
