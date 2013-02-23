@@ -80,7 +80,7 @@ position_time_offset: The time offset between positions, this will work better
 				current_pos += conf.DEFAULT_TIME_OFFSET * (vel + 0.5 * tmp_acc_t)
 				self.vel += tmp_acc_t
 				current_time+=conf.DEFAULT_TIME_OFFSET
-			current_n++
+			current_n+=1
 			pos_list += current_pos
 		return pos_list
 
