@@ -40,11 +40,12 @@ class GravitySink(object):
 		self.vel = Vect(vel)
 		self.mass = mass
 
-	def move(self, time_offset):
-		self.pos += time_offset * (vel + 0.5 * time_offset * accel)
-		self.vel += time_offset * accel
+	def move(self, phys, time_offset):
+		tmp_acc_t = time_offset * phys.calculate_accel_offset(self.pos, time)
+		self.pos += time_offset * (vel + 0.5 * tmp_acc_t)
+		self.vel += tmp_acc_t
 
-class Physics(object):
+class Physics(object)
 	def __init__ (self):
 		self.gravity_sources = []
 
