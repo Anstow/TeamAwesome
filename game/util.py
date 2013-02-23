@@ -15,6 +15,7 @@ blank_sfc
 
 """
 
+from math import cos, sin
 from random import random, randrange
 from collections import defaultdict
 from bisect import bisect
@@ -61,6 +62,14 @@ class Vect(list):
 		assert(c != 0)
 		tmpC = 1./c
 		return Vect(tmpC*self[0], tmpC*self[1])
+
+	def rotate (self, angle, about = (0, 0)):
+		ax, ay = about
+		x = self[0] - ax
+		y = self[1] - ay
+		c = cos(angle)
+		s = sin(angle)
+		return Vect(ax + c * x - s * y, ay + s * x + c * y)
 
 
 def dd (default, items = {}, **kwargs):

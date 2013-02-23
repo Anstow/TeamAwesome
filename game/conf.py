@@ -115,6 +115,7 @@ class Conf (object):
 	# physics
 	DEFAULT_TIME_OFFSET = 0.015
 	GRAVITY_CONSTANT = 1
+	ASTEROID_DESTROY_DIST = 300 # outside screen borders
 
 	# graphics
 	GRAPHICS_LAYERS = {

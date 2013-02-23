@@ -105,19 +105,24 @@ class Level (World):
 
 	def collision_detection(self):
 		es = self.entities
+		dist = conf.ASTEROID_DESTROY_DIST * 2
+		in_bdy = pg.Rect((0, 0), conf.RES).inflate(dist, dist).collidepoint
 		for ast in es:
 			if isinstance(ast, Asteroid):
-				# Firstly collide with everthing
-				# TODO: collide with missiles
-				# TODO: collide with force fields
-				collided_with = ast.collide_with_list(es)
-				try:
-					ent = next(collided_with)
-				except StopIteration:
-					pass
+				if not in_bdy(ast.pos):
+					self.rm_ast(ast)
 				else:
-					# TODO: collision resolution, this should be done by overriding hit_by_asteroid
-					ent.hit_by_asteroid(ast)
+					# Firstly collide with everthing
+					# TODO: collide with missiles
+					# TODO: collide with force fields
+					collided_with = ast.collide_with_list(es)
+					try:
+						ent = next(collided_with)
+					except StopIteration:
+						pass
+					else:
+						# TODO: collision resolution, this should be done by overriding hit_by_asteroid
+						ent.hit_by_asteroid(ast)
 
 	def add_ast (self, ast):
 		self.entities.append(ast)
@@ -125,4 +130,4 @@ class Level (World):
 
 	def rm_ast (self, ast):
 		self.entities.remove(ast)
-		self.graphics.remove(ast.graphic)
+		self.graphics.rm(ast.graphic)
