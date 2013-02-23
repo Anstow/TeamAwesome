@@ -1,29 +1,41 @@
 from conf import conf
 from pygame import Rect
 
-class Vect(Rect):
+class Vect(list):
 	def __init__ (self, *args):
-		if len(args) == 2:
-			Rect.__init__(self, args[0], args[1], 0, 0)
+		if len(args) >= 2:
+			v = args[:2]
 		else:
-			assert len(args) == 1
-			Rect.__init__(self, args[0][0], args[0][1], 0, 0)
+			v = args[0]
+		list.__init__(self, v)
 
 	def __abs__(self):
 		return self[0]**2 + self[1]**2
 
 	def __add__ (self, v):
-		return Vect(*self.move(v[:2])[:2])
+		return Vect(self[0] + v[0], self[1] + v[1])
 
 	def __sub__ (self, v):
-		return Vect(*self.move(-v[0], -v[1])[:2])
+		return Vect(self[0] - v[0], self[1] - v[1])
+
+	def __iadd__ (self, v):
+		self[0] += v[0]
+		self[1] += v[1]
+		return self
+
+	def __isub__ (self, v):
+		self[0] -= v[0]
+		self[1] -= v[1]
+		return self
 
 	def __mul__ (self, c):
 		return Vect(c*self[0], c*self[1])
 
+	__rmul__ = __mul__
+
 	def __div__ (self, c):
 		assert(c != 0)
-		tmpC = float(1)/c
+		tmpC = 1./c
 		return Vect(tmpC*self[0], tmpC*self[1])
 
 class GravitySource(object):
@@ -42,7 +54,7 @@ class GravitySink(object):
 
 	def move(self, phys, time_offset):
 		tmp_acc_t = time_offset * phys.calculate_accel_offset(self.pos, time_offset)
-		self.pos += time_offset * (vel + 0.5 * tmp_acc_t)
+		self.pos += time_offset * (self.vel + 0.5 * tmp_acc_t)
 		self.vel += tmp_acc_t
 
 class Physics(object):
@@ -83,5 +95,3 @@ position_time_offset: The time offset between positions, this will work better
 			current_n+=1
 			pos_list += current_pos
 		return pos_list
-
-

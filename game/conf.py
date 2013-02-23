@@ -106,12 +106,13 @@ class Conf (object):
 
     # physics
     DEFAULT_TIME_OFFSET = 0.015
-    GRAVITY_CONSTANT = .5
+    GRAVITY_CONSTANT = 1
 
     # graphics
     GRAPHICS_LAYERS = {
         'bg': 0,
-        'planet': -1
+        'planet': -1,
+        'asteroid': -2
     }
 
 
