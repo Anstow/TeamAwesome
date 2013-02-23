@@ -9,7 +9,7 @@ from physics import Physics
 
 
 class Level (World):
-    def __init__ (self, scheduler, evthandler, n_players = 2):
+	def __init__ (self, scheduler, evthandler, n_players = 2):
 		World.__init__(self, scheduler, evthandler)
 		self.t = 0
 		self.scheduler.interp(lambda t: t, self.update_t)
@@ -39,9 +39,22 @@ class Level (World):
 		self.entities = self.phys.gravity_sources
 		self.graphics.add(*(e.graphic for e in self.entities))
 
-    def update_t (self, t):
+	def update_t (self, t):
 		phys = self.phys
 		dt = t - self.t
 		self.t = t
 		for e in self.entities:
 			e.move(phys, dt)
+
+	def collision_detection(self):
+		for ast in self.asteroids:
+			# Firstly collide with everthing
+			# TODO: collide with missiles
+			# TODO: collide with force fields
+			colided_with=ast.collide_with_list(self.entities)
+			if colided_with is not None:
+				# TODO: collision resolution, this should be done by overriding hit_by_asteroid
+				colided_with.hit_by_asteroid(ast)
+
+	def remove_ent(self, ent):
+		pass
