@@ -14,11 +14,15 @@ class Planet (GravitySource):
 			pos = (centre.pos[0] + dist * cos(angle),
 			       centre.pos[1] + dist * sin(angle))
 			freq = float(conf.GRAVITY_CONSTANT * centre.mass) / dist ** 3
-			get_pos = lambda t: Vect(
-			    centre.pos[0] + dist * cos(freq * t + angle),
-			    centre.pos[1] + dist * sin(freq * t + angle)
-			)
-			world.scheduler.interp(get_pos, self.set_pos)
+			centre = centre.pos
+
+			def get_pos (dt):
+				cx, cy = centre
+				x, y = self.pos - centre
+				c = cos(freq * dt)
+				s = sin(freq * dt)
+				return Vect(cx + c * x - s * y, cy + s * x + c * y)
+
 			self.get_pos_at_time = get_pos
 		else:
 			pos = centre
@@ -28,7 +32,8 @@ class Planet (GravitySource):
 		self.graphic.resize(2 * radius, 2 * radius)
 		self.graphic.layer = conf.GRAPHICS_LAYERS['planet']
 
-	def set_pos (self, p):
+	def move (self, dt):
+		p = self.get_pos_at_time(dt)
 		self.pos = p
 		self.graphic.pos = (ir(p[0] - self.collision_radius), ir(p[1] - self.collision_radius))
 

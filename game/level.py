@@ -17,14 +17,16 @@ class Level (World):
         self.phys.gravity_sources.append(sun)
         planets = [Planet(self, 150, 20, sun, 200, 0)]
         self.phys.gravity_sources += planets
-        self.asteroids = [Asteroid((300, 300), (0, -60))]
+        self.asteroids = [Asteroid((300, 300), (0, -70))]
         add_graphics(sun.graphic, *(p.graphic for p in planets + self.asteroids))
         self.t = 0
         self.scheduler.interp(lambda t: t, self.update_t)
 
     def update_t (self, t):
+		phys = self.phys
 		dt = t - self.t
 		self.t = t
-		phys = self.phys
+		for s in phys.gravity_sources:
+			s.move(dt)
 		for a in self.asteroids:
 			a.move(phys, dt)

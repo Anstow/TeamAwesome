@@ -2,7 +2,6 @@
 
 gm doesn't update everywhere it should
 
-
     FEATURES
 
 graphics
@@ -11,3 +10,7 @@ collisions
 draw trajectories
 	calculation is done in Physics.predict_future_psitions
 inputs
+
+	ENHANCEMENTS
+
+destroy asteroids that go too far out
