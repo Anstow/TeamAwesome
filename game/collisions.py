@@ -21,6 +21,3 @@ class CollisionEnt(object):
 
 	def hit_by_asteroid (self, asteroid):
 		pass
-				
-
-

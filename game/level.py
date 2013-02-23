@@ -34,7 +34,7 @@ class Level (World):
 		# extra planets
 		
 
-		self.asteroids = [Asteroid([300,300],[10,70],1,10)]
+		self.asteroids = []#Asteroid([300,300],[10,70],1,10)]
 		self.phys.gravity_sources = [sun] + planets
 		self.entities = self.phys.gravity_sources + self.asteroids
 		self.graphics.add(*(e.graphic for e in self.entities))
@@ -52,11 +52,10 @@ class Level (World):
 			# Firstly collide with everthing
 			# TODO: collide with missiles
 			# TODO: collide with force fields
-			colided_with=ast.collide_with_list(self.entities)
-			if colided_with is not None:
+			collided_with = ast.collide_with_list(self.entities)
+			if collided_with is not None:
 				# TODO: collision resolution, this should be done by overriding hit_by_asteroid
-				colided_with.hit_by_asteroid(ast)
-				print("coliding")
+				collided_with.hit_by_asteroid(ast)
 
 	def remove_ent(self, ent):
 		pass
