@@ -589,7 +589,8 @@ otherwise it will not be called again.
                     del cbs[i]
 
     def interp (self, get_val, set_val, t_max = None, val_min = None,
-                val_max = None, end = None, round_val = False, multi_arg = False):
+                val_max = None, end = None, round_val = False,
+                multi_arg = False):
         """Vary a value over time.
 
 interp(get_val, set_val[, t_max][, val_min][, val_max][, end],

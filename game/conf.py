@@ -104,9 +104,15 @@ class Conf (object):
     # per-backend, each a {key: value} dict to update Game.fonts with
     REQUIRED_FONTS = dd({})
 
-	# physics
-	DEFAULT_TIME_OFFSET = 0.015
-	GRAVITY_CONSTANT = 1
+    # physics
+    DEFAULT_TIME_OFFSET = 0.015
+    GRAVITY_CONSTANT = .5
+
+    # graphics
+    GRAPHICS_LAYERS = {
+        'bg': 0,
+        'planet': -1
+    }
 
 
 def translate_dd (d):

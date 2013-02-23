@@ -44,7 +44,7 @@ class GravitySink(object):
 		self.pos += time_offset * (vel + 0.5 * time_offset * accel)
 		self.vel += time_offset * accel
 
-class Physics(object)
+class Physics(object):
 	def __init__ (self):
 		self.gravity_sources = []
 
