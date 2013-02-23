@@ -1,4 +1,4 @@
-from math import cos, sin, pi
+from math import cos, sin, atan2, pi
 from random import uniform
 
 from ext import evthandler as eh
@@ -14,7 +14,26 @@ from physics import Physics
 class Player (Planet):
 	def __init__ (self, ident, *args):
 		self.img_ident = 'player{0}'.format(ident)
+		self.aiming = [[0, 0], [0, 0]] # (defensive, offensive) (x, y)
+		self._fire_last = [0, 0] # (defensive, offensive) - since fire are axes
 		Planet.__init__(self, *args)
+
+	def aim (self, mode, evt):
+		self.aiming[mode >= 2][mode % 2] = evt.value
+		(a, b), (c, d) = self.aiming
+		#print '({:.2f} {:.2f}) ({:.2f} {:.2f})'.format(a, b, c, d)
+
+	def fire (self, mode, evt):
+		last = self._fire_last[mode]
+		now = evt.value
+		if last < conf.TRIGGER_THRESHOLD and now >= conf.TRIGGER_THRESHOLD:
+			if mode == 1:
+				# fire asteroid
+				x, y = self.aiming[mode]
+				angle = atan2(y, x)
+				a = Asteroid(self.pos, (100 * cos(angle), 100 * sin(angle)))
+				self.world.add_ast(a)
+		self._fire_last[mode] = now
 
 
 class Level (World):
@@ -31,10 +50,14 @@ class Level (World):
 			j = pg.joystick.Joystick(i)
 			j.init()
 			js.append(j)
-		evthandler.add_event_handlers({
-			pg.JOYBUTTONDOWN: self._joycb,
-			pg.JOYAXISMOTION: self._joycb
-		})
+		# {type: {id: (action, action_mode)}}
+		self.controls = controls = {}
+		for action, evts in conf.CONTROLS.iteritems():
+			if isinstance(evts[0], basestring):
+				evts = (evts,)
+			for mode, (e_type, e_id) in enumerate(evts):
+				controls.setdefault(e_type, {})[e_id] = (action, mode)
+		evthandler.add_event_handlers(dict.fromkeys(controls, self._joycb))
 
 		# sun
 		self.phys = Physics()
@@ -48,21 +71,20 @@ class Level (World):
 		# players
 		angle0 = uniform(0, 2 * pi)
 		d_angle = 2 * pi / n_players
-		self.players = [Player(i, p_data['density'], p_radius, sun, p_sun_dist, angle0 + i * d_angle) for i in xrange(n_players)]
+		self.players = [Player(i, self, p_data['density'], p_radius, sun, p_sun_dist, angle0 + i * d_angle) for i in xrange(n_players)]
 		# extra planets
 		planets = list(self.players)
 
-		self.asteroids = []#Asteroid([300,300],[10,70],1,10)]
+		asteroids = []
 		self.phys.gravity_sources = [sun] + planets
-		self.entities = self.phys.gravity_sources + self.asteroids
+		self.entities = self.phys.gravity_sources + asteroids
 		self.graphics.add(*(e.graphic for e in self.entities))
 
 	def _joycb (self, evt):
-		if evt.type == pg.JOYBUTTONDOWN:
-			print 'button', evt.button
-		else:
-			if abs(evt.value) > .5:
-				print 'axis', evt.axis
+		p = self.players[evt.joy]
+		e_ident = evt.button if evt.type == pg.JOYBUTTONDOWN else evt.axis
+		action, mode = self.controls[evt.type][e_ident]
+		getattr(p, action)(mode, evt)
 
 	def update_t (self, t):
 		phys = self.phys
@@ -73,14 +95,21 @@ class Level (World):
 		self.collision_detection()
 
 	def collision_detection(self):
-		for ast in self.asteroids:
-			# Firstly collide with everthing
-			# TODO: collide with missiles
-			# TODO: collide with force fields
-			collided_with = ast.collide_with_list(self.entities)
-			if collided_with is not None:
-				# TODO: collision resolution, this should be done by overriding hit_by_asteroid
-				collided_with.hit_by_asteroid(ast)
+		es = self.entities
+		for ast in es:
+			if isinstance(ast, Asteroid):
+				# Firstly collide with everthing
+				# TODO: collide with missiles
+				# TODO: collide with force fields
+				collided_with = ast.collide_with_list(es)
+				if collided_with is not None:
+					# TODO: collision resolution, this should be done by overriding hit_by_asteroid
+					collided_with.hit_by_asteroid(ast)
 
-	def remove_ent(self, ent):
-		pass
+	def add_ast (self, ast):
+		self.entities.append(ast)
+		self.graphics.add(ast.graphic)
+
+	def rm_ast (self, ast):
+		self.entities.remove(ast)
+		self.graphics.remove(ast.graphic)

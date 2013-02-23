@@ -27,7 +27,8 @@ def position_graphic (obj):
 class Planet (GravitySource):
 	img_ident = ident = 'planet'
 
-	def __init__ (self, density, radius, centre, dist, angle):
+	def __init__ (self, world, density, radius, centre, dist, angle):
+		self.world = world
 		pos = (centre.pos[0] + dist * cos(angle),
 				centre.pos[1] + dist * sin(angle))
 		freq = float(conf.GRAVITY_CONSTANT * centre.mass) / dist ** 3
@@ -64,7 +65,8 @@ class Sun (GravitySource):
 
 
 class Asteroid (GravitySink):
-	img_ident = ident = 'asteroid'
+	ident = 'asteroid'
+	img_ident = 'planet'
 
 	def __init__ (self, pos, vel, mass = 1, radius = 10):
 		GravitySink.__init__(self, pos, vel, mass, radius)

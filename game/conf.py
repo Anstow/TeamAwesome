@@ -81,11 +81,12 @@ class Conf (object):
 	KEYS_DIRN = (KEYS_LEFT, KEYS_UP, KEYS_RIGHT, KEYS_DOWN)
 	# controllers
 	CONTROLS = {
-		'aim': (('axis', 0), ('axis', 1), ('axis', 3), ('axis', 4)),
-		'fire': (('axis', 2), ('axis', 5)),
-		'scroll': (('button', 4), ('button', 5)),
-		'select': ('button', 0)
+		'aim': ((pg.JOYAXISMOTION, 0), (pg.JOYAXISMOTION, 1), (pg.JOYAXISMOTION, 3), (pg.JOYAXISMOTION, 4)), # defensive, offensive
+		'fire': ((pg.JOYAXISMOTION, 2), (pg.JOYAXISMOTION, 5)),
+		#'scroll': ((pg.JOYBUTTONDOWN, 4), (pg.JOYBUTTONDOWN, 5)),
+		#'select': (pg.JOYBUTTONDOWN, 0)
 	}
+	TRIGGER_THRESHOLD = 0
 
 	# audio
 	MUSIC_AUTOPLAY = False # just pauses music
