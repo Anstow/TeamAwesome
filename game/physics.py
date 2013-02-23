@@ -1,8 +1,42 @@
 from conf import conf
+from pygame import Rect
+
+class Vect(Rect):
+	def __init__ (self, *args):
+		if len(args) == 2:
+			Rect.__init__(self, args[0], args[1], 0, 0)
+		else:
+			assert len(args) == 2
+			Rect.__init__(self, args[0][0], args[0][1], 0, 0)
+
+	def __abs__(self):
+		return self[0]**2 + self[1]**2
+
+	def __add__ (self, v):
+		return Vect(*self.move(v[:2])[:2])
+
+	def __sub__ (self, v):
+		return Vect(*self.move(-v[0], -v[1])[:2])
+
+	def __mul__ (self, c):
+		return Vect(c*self[0], c*self[1])
+
+	def __div__ (self, c):
+		assert(c != 0)
+		tmpC = float(1)/c
+		return Vect(tmpC*self[0], tmpC*self[1])
 
 class GravitySource(object):
 	def __init__ (self, pos, mass):
-		self.pos = list(pos)
+		self.pos = Vect(pos)
+		self.mass = mass
+	
+	def get_pos_at_time(time):
+		return self.pos
+
+class GravitySink(object):
+	def __init__ (self, pos, mass):
+		self.pos = Vect(pos)
 		self.mass = mass
 	
 	def get_pos_at_time(time):
@@ -11,19 +45,24 @@ class GravitySource(object):
 class Physics(object):
 	def __init__ (self):
 		self.gravity_sources = []
-		self.asteroids = []
 
-	def calculate_acceleration_offset(self, pos, time):
-		accel = [0,0]
+	def calculate_force_offset(self, pos, time):
+		force = Vect(0,0)
 		for g in self.gravity_sources:
 			tmp_pos = g.get_pos_at_time(time)
-			dist_2 = (pos[0] - temp_pos[0])**2 + (pos[1] - temp_pos[1])**2
+			dist_2 = abs(temp_pos - pos)
 			assert dist_2 != 0
-			accel[0] += conf.GRAVITY_CONSTANT * g.mass * float(tmp_pos[0]-pos[0])/(dist_2**1.5)
-			accel[1] += conf.GRAVITY_CONSTANT * g.mass * float(tmp_pos[1]-pos[1])/(dist_2**1.5)
-		return accel
+			force += conf.GRAVITY_CONSTANT * g.mass * (tmp_pos-pos)/(dist_2**1.5)
+		return force
 
-	def predict_future_positions(self, g_src, no_positions, position_time_offset):
+	def predict_future_positions(self, g_ast, no_positions, position_time_offset):
 		assert position_time_offset >= conf.DEFAULT_TIME_OFFSET
-		current_pos = g_src.pos
+		current_pos = g_ast.pos
+		current_time = 0
+		current_n=0
+		while current_n<no_positions:
+			while current_time<no_positions*position_time_offset:
+				current_pos[0] += 0
+				current_time+=conf.DEFAULT_TIME_OFFSET
+
 
