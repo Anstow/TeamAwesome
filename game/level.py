@@ -4,8 +4,5 @@ import gm
 
 
 class Level (World):
-    def __init__ (self, evthandler):
-        World.__init__(self, evthandler)
-
-    def update (self):
-        pass
+    def __init__ (self, scheduler, evthandler):
+        World.__init__(self, scheduler, evthandler)
