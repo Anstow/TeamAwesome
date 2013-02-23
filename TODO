@@ -11,14 +11,18 @@ draw trajectories
 	calculation is done in Physics.predict_future_psitions
 inputs
 technological advancements
-	satellites to defend yourself
-	homing asteroids
-	force field
+	satellites which represent the upgrades you have, can get destroyed (but also defend you)
+	offensive: asteroids; upgrades:
+		size
+		speed
+	defensive:
+		slightly-homing missiles which don't go very far, used to hit incoming asteroids
+		force field
 
 	ENHANCEMENTS
 
 destroy asteroids that go too far out
 
-module are satelites of planets?
+module are satellites of planets?
 	when hit are destroyed/damaged
-	if the planet is hit you lose techonlogical advancement
+	if the planet is hit you lose technological advancement

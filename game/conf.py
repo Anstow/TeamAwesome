@@ -79,6 +79,13 @@ class Conf (object):
 	KEYS_UP = (pg.K_UP, pg.K_w, pg.K_z, pg.K_COMMA)
 	KEYS_DOWN = (pg.K_DOWN, pg.K_s, pg.K_o)
 	KEYS_DIRN = (KEYS_LEFT, KEYS_UP, KEYS_RIGHT, KEYS_DOWN)
+	# controllers
+	CONTROLS = {
+		'aim': (('axis', 0), ('axis', 1), ('axis', 3), ('axis', 4)),
+		'fire': (('axis', 2), ('axis', 5)),
+		'scroll': (('button', 4), ('button', 5)),
+		'select': ('button', 0)
+	}
 
 	# audio
 	MUSIC_AUTOPLAY = False # just pauses music
@@ -115,6 +122,7 @@ class Conf (object):
 		'planet': -2,
 		'asteroid': -3
 	}
+	IMG_OFFSETS = dd(0, sun = 65, player0 = 8)
 
 	# level generation
 	SUN_DENSITY = 100
