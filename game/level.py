@@ -13,14 +13,18 @@ class Level (World):
         bg = gm.Colour(((0, 0), conf.RES), (0, 0, 0))
         add_graphics(bg)
         bg.layer = conf.GRAPHICS_LAYERS['bg']
-        self.planets = [Planet(self, 1, (500, 300), 100, 0)]
-        self.phys.gravity_sources += self.planets
-        add_graphics(*(p.graphic for p in self.planets))
-        self.asteroids = [Asteroid((300, 200), (0, 0))]
-        add_graphics(*(a.graphic for a in self.asteroids))
+        sun = Planet(self, 10, 50, (500, 300))
+        self.phys.gravity_sources.append(sun)
+        planets = [Planet(self, 150, 20, sun, 200, 0)]
+        self.phys.gravity_sources += planets
+        self.asteroids = [Asteroid((300, 300), (0, -60))]
+        add_graphics(sun.graphic, *(p.graphic for p in planets + self.asteroids))
+        self.t = 0
         self.scheduler.interp(lambda t: t, self.update_t)
 
     def update_t (self, t):
-        phys = self.phys
-        for a in self.asteroids:
-            a.move(phys, t)
+		dt = t - self.t
+		self.t = t
+		phys = self.phys
+		for a in self.asteroids:
+			a.move(phys, dt)

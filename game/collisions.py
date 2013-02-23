@@ -1,3 +1,5 @@
+from util import Vect
+
 class CollisionEnt(object):
 	def __init__ (self, pos, collision_radius):
 		self.pos = Vect(pos)

@@ -25,6 +25,44 @@ import pygame as pg
 # abstract
 
 
+class Vect(list):
+	def __init__ (self, *args):
+		if len(args) >= 2:
+			v = args[:2]
+		else:
+			v = args[0]
+		list.__init__(self, v)
+
+	def __abs__(self):
+		return self[0]**2 + self[1]**2
+
+	def __add__ (self, v):
+		return Vect(self[0] + v[0], self[1] + v[1])
+
+	def __sub__ (self, v):
+		return Vect(self[0] - v[0], self[1] - v[1])
+
+	def __iadd__ (self, v):
+		self[0] += v[0]
+		self[1] += v[1]
+		return self
+
+	def __isub__ (self, v):
+		self[0] -= v[0]
+		self[1] -= v[1]
+		return self
+
+	def __mul__ (self, c):
+		return Vect(c*self[0], c*self[1])
+
+	__rmul__ = __mul__
+
+	def __div__ (self, c):
+		assert(c != 0)
+		tmpC = 1./c
+		return Vect(tmpC*self[0], tmpC*self[1])
+
+
 def dd (default, items = {}, **kwargs):
     """Create a collections.defaultdict with a static default.
 

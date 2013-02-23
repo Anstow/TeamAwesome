@@ -1,57 +1,18 @@
 from conf import conf
-from pygame import Rect
-
-class Vect(list):
-	def __init__ (self, *args):
-		if len(args) >= 2:
-			v = args[:2]
-		else:
-			v = args[0]
-		list.__init__(self, v)
-
-	def __abs__(self):
-		return self[0]**2 + self[1]**2
-
-	def __add__ (self, v):
-		return Vect(self[0] + v[0], self[1] + v[1])
-
-	def __sub__ (self, v):
-		return Vect(self[0] - v[0], self[1] - v[1])
-
-	def __iadd__ (self, v):
-		self[0] += v[0]
-		self[1] += v[1]
-		return self
-
-	def __isub__ (self, v):
-		self[0] -= v[0]
-		self[1] -= v[1]
-		return self
-
-	def __mul__ (self, c):
-		return Vect(c*self[0], c*self[1])
-
-	__rmul__ = __mul__
-
-	def __div__ (self, c):
-		assert(c != 0)
-		tmpC = 1./c
-		return Vect(tmpC*self[0], tmpC*self[1])
-
-class CollisionEnt(object):
-	def __init__ (self, pos, collision_radius):
+from util import Vect
+from collisions import CollisionEnt
 
 class GravitySource(CollisionEnt):
 	def __init__ (self, pos, mass, collision_radius):
-		CollisionEnt.__init__(pos, collision_radius)
+		CollisionEnt.__init__(self, pos, collision_radius)
 		self.mass = mass
 	
-	def get_pos_at_time(time_offset):
+	def get_pos_at_time(self, time_offset):
 		return self.pos
 
 class GravitySink(CollisionEnt):
 	def __init__ (self, pos, vel, mass, collision_radius):
-		CollisionEnt.__init__(pos, collision_radius)
+		CollisionEnt.__init__(self, pos, collision_radius)
 		self.vel = Vect(vel)
 		self.mass = mass
 
