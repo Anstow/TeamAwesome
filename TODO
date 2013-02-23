@@ -6,7 +6,7 @@ gm doesn't update everywhere it should
 
 graphics
 sound
-collisions
+collision resolution
 draw trajectories
 	calculation is done in Physics.predict_future_psitions
 inputs
