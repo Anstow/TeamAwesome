@@ -184,6 +184,8 @@ Takes any number of Graphic or GraphicsGroup instances.
                     if g in all_gs:
                         all_gs.remove(g)
                         g._manager = None
+                        if g.was_visible:
+							self.dirty(g.last_rect)
                         if not all_gs:
                             del all_gs[l]
                             ls.remove(l)

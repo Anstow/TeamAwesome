@@ -5,7 +5,13 @@ gm doesn't update everywhere it should
 	FEATURES
 
 graphics
+	asteroids
+	planets (players + more)
+	weapons + effects
 sound
+	ambient
+	music
+	effects
 collision resolution
 draw trajectories
 	calculation is done in Physics.predict_future_psitions
@@ -19,11 +25,3 @@ technological advancements
 	defensive:
 		slightly-homing missiles which don't go very far, used to hit incoming asteroids
 		force field
-
-	ENHANCEMENTS
-
-destroy asteroids that go too far out
-module are satellites of planets?
-	when hit are destroyed/damaged
-	if the planet is hit you lose technological advancement
-limit fire rate

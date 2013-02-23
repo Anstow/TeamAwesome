@@ -15,12 +15,12 @@ from physics import Physics
 class Player (Planet):
 	def __init__ (self, ident, *args):
 		self.img_ident = 'player{0}'.format(ident)
+		Planet.__init__(self, *args)
 		self.launch_speed = conf.ASTEROID_LAUNCH_SPEED
 		self._since_last_launch = conf.ASTEROID_LAUNCH_GAP
 		self.aiming = [[0, 0], [0, 0]] # (defensive, offensive) (x, y)
 		self.aiming_angle = [0, 0]
 		self._fire_last = [0, 0] # (defensive, offensive) - since fire are axes
-		Planet.__init__(self, *args)
 
 	def aim (self, mode, evt):
 		action = mode >= 2
@@ -40,7 +40,7 @@ class Player (Planet):
 				vel = (self.launch_speed * cos(angle), self.launch_speed * sin(angle))
 				a = Asteroid(pos, vel)
 				self.world.add_ast(a)
-				self._since_last_launch -= conf.ASTEROID_LAUNCH_GAP
+				self._since_last_launch = 0
 		self._fire_last[mode] = now
 
 	def move (self, phys, dt):
@@ -110,22 +110,25 @@ class Level (World):
 		es = self.entities
 		dist = conf.ASTEROID_DESTROY_DIST * 2
 		in_bdy = pg.Rect((0, 0), conf.RES).inflate(dist, dist).collidepoint
-		for ast in es:
-			if isinstance(ast, Asteroid):
-				if not in_bdy(ast.pos):
-					self.rm_ast(ast)
-				else:
-					# Firstly collide with everthing
-					# TODO: collide with missiles
-					# TODO: collide with force fields
-					collided_with = ast.collide_with_list(es)
-					try:
-						ent = next(collided_with)
-					except StopIteration:
-						pass
+		for ast in list(es):
+			# might have been removed earlier in the loop
+			if ast in es:
+				if isinstance(ast, Asteroid):
+					if not in_bdy(ast.pos):
+						self.rm_ast(ast)
 					else:
-						# TODO: collision resolution, this should be done by overriding hit_by_asteroid
-						ent.hit_by_asteroid(ast)
+						# Firstly collide with everything
+						# TODO: collide with missiles
+						# TODO: collide with force fields
+						collided_with = ast.collide_with_list(es)
+						try:
+							while True:
+								ent = next(collided_with)
+								if ent.hit_by_asteroid(ast):
+									self.rm_ast(ast)
+									break
+						except StopIteration:
+							pass
 
 	def add_ast (self, ast):
 		self.entities.append(ast)
