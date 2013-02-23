@@ -128,12 +128,15 @@ class Conf (object):
 	# level generation
 	SUN_DENSITY = 100
 	SUN_RADIUS = 30
-	PLAYER_PLANET_DATA = {
+	PLAYER_PLANET = {
 		'density': 10,
 		'radius': 8,
 		'sun dist': 200,
 		'edge dist': 110
 	}
+	ASTEROID_LAUNCH_SPEED = 100
+	ASTEROID_LAUNCH_DIST = 10 # from player
+	ASTEROID_LAUNCH_GAP = 5 # seconds
 
 
 def translate_dd (d):

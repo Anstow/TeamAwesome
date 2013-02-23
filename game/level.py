@@ -14,26 +14,35 @@ from physics import Physics
 class Player (Planet):
 	def __init__ (self, ident, *args):
 		self.img_ident = 'player{0}'.format(ident)
+		self.launch_speed = conf.ASTEROID_LAUNCH_SPEED
+		self._since_last_launch = conf.ASTEROID_LAUNCH_GAP
 		self.aiming = [[0, 0], [0, 0]] # (defensive, offensive) (x, y)
+		self.aiming_angle = [0, 0]
 		self._fire_last = [0, 0] # (defensive, offensive) - since fire are axes
 		Planet.__init__(self, *args)
 
 	def aim (self, mode, evt):
-		self.aiming[mode >= 2][mode % 2] = evt.value
-		(a, b), (c, d) = self.aiming
-		#print '({:.2f} {:.2f}) ({:.2f} {:.2f})'.format(a, b, c, d)
+		action = mode >= 2
+		v = self.aiming[action]
+		v[mode % 2] = evt.value
+		x, y = v
+		self.aiming_angle[action] = atan2(y, x)
 
 	def fire (self, mode, evt):
 		last = self._fire_last[mode]
 		now = evt.value
 		if last < conf.TRIGGER_THRESHOLD and now >= conf.TRIGGER_THRESHOLD:
-			if mode == 1:
+			if mode == 1 and self._since_last_launch >= conf.ASTEROID_LAUNCH_GAP:
 				# fire asteroid
-				x, y = self.aiming[mode]
-				angle = atan2(y, x)
-				a = Asteroid(self.pos, (100 * cos(angle), 100 * sin(angle)))
+				angle = self.aiming_angle[mode]
+				a = Asteroid(self.pos, (self.launch_speed * cos(angle), self.launch_speed * sin(angle)))
 				self.world.add_ast(a)
+				self._since_last_launch -= conf.ASTEROID_LAUNCH_GAP
 		self._fire_last[mode] = now
+
+	def move (self, phys, dt):
+		Planet.move(self, phys, dt)
+		self._since_last_launch += dt
 
 
 class Level (World):
@@ -61,7 +70,7 @@ class Level (World):
 
 		# sun
 		self.phys = Physics()
-		p_data = conf.PLAYER_PLANET_DATA
+		p_data = conf.PLAYER_PLANET
 		p_radius = p_data['radius']
 		p_sun_dist = p_data['sun dist']
 		pad = p_data['edge dist'] + p_sun_dist + p_radius
