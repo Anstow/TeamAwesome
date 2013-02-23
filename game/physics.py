@@ -6,7 +6,7 @@ class Vect(Rect):
 		if len(args) == 2:
 			Rect.__init__(self, args[0], args[1], 0, 0)
 		else:
-			assert len(args) == 2
+			assert len(args) == 1
 			Rect.__init__(self, args[0][0], args[0][1], 0, 0)
 
 	def __abs__(self):
@@ -35,29 +35,32 @@ class GravitySource(object):
 		return self.pos
 
 class GravitySink(object):
-	def __init__ (self, pos, mass):
+	def __init__ (self, pos, vel, mass):
 		self.pos = Vect(pos)
+		self.vel = Vect(vel)
 		self.mass = mass
-	
-	def get_pos_at_time(time):
-		return self.pos
+
+	def move(self, time_offset):
+		self.pos += time_offset * (vel + 0.5 * time_offset * accel)
+		self.vel += time_offset * accel
 
 class Physics(object)
 	def __init__ (self):
 		self.gravity_sources = []
 
-	def calculate_force_offset(self, pos, time):
-		force = Vect(0,0)
+	def calculate_accel_offset(self, pos, time):
+		accel = Vect(0,0)
 		for g in self.gravity_sources:
 			tmp_pos = g.get_pos_at_time(time)
 			dist_2 = abs(temp_pos - pos)
 			assert dist_2 != 0
-			force += conf.GRAVITY_CONSTANT * g.mass * (tmp_pos-pos)/(dist_2**1.5)
-		return force
+			accel += conf.GRAVITY_CONSTANT * g.mass * (tmp_pos-pos)/(dist_2**1.5)
+		return accel
 
-	def predict_future_positions(self, g_ast, no_positions, position_time_offset):
+	def predict_future_positions(self, g_sink, no_positions, position_time_offset):
 		assert position_time_offset >= conf.DEFAULT_TIME_OFFSET
-		current_pos = g_ast.pos
+		current_pos = g_sink.vel
+		current_vel = g_sink.vel
 		current_time = 0
 		current_n=0
 		while current_n<no_positions:
