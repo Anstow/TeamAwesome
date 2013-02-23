@@ -34,9 +34,9 @@ class Level (World):
 		# extra planets
 		
 
-		self.asteroids = []
+		self.asteroids = [Asteroid([300,300],[10,70],1,10)]
 		self.phys.gravity_sources = [sun] + planets
-		self.entities = self.phys.gravity_sources
+		self.entities = self.phys.gravity_sources + self.asteroids
 		self.graphics.add(*(e.graphic for e in self.entities))
 
 	def update_t (self, t):
@@ -45,6 +45,7 @@ class Level (World):
 		self.t = t
 		for e in self.entities:
 			e.move(phys, dt)
+		self.collision_detection()
 
 	def collision_detection(self):
 		for ast in self.asteroids:
@@ -55,6 +56,7 @@ class Level (World):
 			if colided_with is not None:
 				# TODO: collision resolution, this should be done by overriding hit_by_asteroid
 				colided_with.hit_by_asteroid(ast)
+				print("coliding")
 
 	def remove_ent(self, ent):
 		pass
