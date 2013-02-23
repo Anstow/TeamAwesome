@@ -29,9 +29,10 @@ class Physics(object):
 		accel = Vect(0,0)
 		for g in self.gravity_sources:
 			tmp_pos = g.get_pos_at_time(time)
-			dist_2 = abs(tmp_pos - pos)
+			dp = tmp_pos - pos
+			dist_2 = abs(dp)
 			assert dist_2 != 0
-			accel += (tmp_pos-pos) * (conf.GRAVITY_CONSTANT * g.mass /(dist_2**1.5))
+			accel += dp * (conf.GRAVITY_CONSTANT * g.mass /(dist_2**1.5))
 		return accel
 
 	def predict_future_positions(self, g_sink, no_positions, position_time_offset):

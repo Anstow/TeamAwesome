@@ -54,7 +54,7 @@ class Conf (object):
 	MOUSE_VISIBLE = dd(False) # per-backend
 	FLAGS = 0
 	FULLSCREEN = False
-	RESIZABLE = True # also determines whether fullscreen togglable
+	RESIZABLE = False # also determines whether fullscreen togglable
 	RES_W = (960, 720)
 	RES_F = pg.display.list_modes()[0]
 	RES = RES_W
@@ -111,8 +111,9 @@ class Conf (object):
 	# graphics
 	GRAPHICS_LAYERS = {
 		'bg': 0,
-		'planet': -1,
-		'asteroid': -2
+		'sun': -1,
+		'planet': -2,
+		'asteroid': -3
 	}
 
 	# level generation

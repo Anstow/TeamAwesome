@@ -4,7 +4,7 @@ from random import uniform
 from conf import conf
 from world import World
 import gm
-from planet import Planet, Asteroid
+from planet import Planet, Sun, Asteroid
 from physics import Physics
 
 
@@ -25,7 +25,7 @@ class Level (World):
 		pad = p_data['edge dist'] + p_sun_dist + p_radius
 		s_w, s_h = conf.RES
 		assert 2 * pad <= s_w and 2 * pad <= s_h
-		sun = Planet(conf.SUN_DENSITY, conf.SUN_RADIUS, (uniform(pad, s_w - pad), uniform(pad, s_h - pad)))
+		sun = Sun(conf.SUN_DENSITY, conf.SUN_RADIUS, (uniform(pad, s_w - pad), uniform(pad, s_h - pad)))
 		# players
 		angle0 = uniform(0, 2 * pi)
 		d_angle = 2 * pi / n_players
