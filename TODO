@@ -9,4 +9,5 @@ graphics
 sound
 collisions
 draw trajectories
+	calculation is done in Physics.predict_future_psitions
 inputs

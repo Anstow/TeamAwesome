@@ -38,17 +38,20 @@ class Vect(list):
 		tmpC = 1./c
 		return Vect(tmpC*self[0], tmpC*self[1])
 
-class GravitySource(object):
-	def __init__ (self, pos, mass):
-		self.pos = Vect(pos)
+class CollisionEnt(object):
+	def __init__ (self, pos, collision_radius):
+
+class GravitySource(CollisionEnt):
+	def __init__ (self, pos, mass, collision_radius):
+		CollisionEnt.__init__(pos, collision_radius)
 		self.mass = mass
 	
 	def get_pos_at_time(time_offset):
 		return self.pos
 
-class GravitySink(object):
-	def __init__ (self, pos, vel, mass):
-		self.pos = Vect(pos)
+class GravitySink(CollisionEnt):
+	def __init__ (self, pos, vel, mass, collision_radius):
+		CollisionEnt.__init__(pos, collision_radius)
 		self.vel = Vect(vel)
 		self.mass = mass
 
@@ -79,6 +82,7 @@ g_sink: The sink to predict the future of
 no_positions: The number of positions to compute
 position_time_offset: The time offset between positions, this will work better
                       if its a multiple of conf.DEFAULT_TIME_OFFSET
+
 """
 		assert position_time_offset >= conf.DEFAULT_TIME_OFFSET
 		pos_list = []
