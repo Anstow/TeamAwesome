@@ -13,6 +13,8 @@ sound
 	music
 	effects
 collision resolution
+	asteroid: explosion graphics, effects on player
+	other things
 draw trajectories
 	calculation is done in Physics.predict_future_psitions
 inputs

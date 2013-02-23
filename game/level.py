@@ -38,7 +38,7 @@ class Player (Planet):
 				angle = self.aiming_angle[mode]
 				pos = self.pos + Vect(conf.ASTEROID_LAUNCH_DIST, 0).rotate(angle)
 				vel = (self.launch_speed * cos(angle), self.launch_speed * sin(angle))
-				a = Asteroid(pos, vel)
+				a = Asteroid(self.world, pos, vel)
 				self.world.add_ast(a)
 				self._since_last_launch = 0
 		self._fire_last[mode] = now

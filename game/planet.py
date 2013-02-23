@@ -64,7 +64,8 @@ class Asteroid (GravitySink):
 	ident = 'asteroid'
 	img_ident = 'planet'
 
-	def __init__ (self, pos, vel, mass = 1, radius = 10):
+	def __init__ (self, world, pos, vel, mass = 1, radius = 10):
+		self.world = world
 		GravitySink.__init__(self, pos, vel, mass, radius)
 		self.graphic = Image((ir(pos[0] - radius), ir(pos[1] - radius)), 'planet.png')
 		self.graphic = mk_graphic(self)
@@ -74,3 +75,7 @@ class Asteroid (GravitySink):
 		GravitySink.move(self, phys, t)
 		x, y = self.pos
 		position_graphic(self)
+
+	def hit_by_asteroid (self, ast):
+		self.world.rm_ast(self)
+		return True
