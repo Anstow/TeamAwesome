@@ -7,7 +7,7 @@ from physics import GravitySource, GravitySink
 
 
 class Planet (GravitySource):
-	def __init__ (self, world, density, radius, centre, dist = None,
+	def __init__ (self, density, radius, centre, dist = None,
 				  angle = None):
 		mass = density * radius ** 3
 		if isinstance(centre, Planet):
@@ -32,7 +32,7 @@ class Planet (GravitySource):
 		self.graphic.resize(2 * radius, 2 * radius)
 		self.graphic.layer = conf.GRAPHICS_LAYERS['planet']
 
-	def move (self, dt):
+	def move (self, phys, dt):
 		p = self.get_pos_at_time(dt)
 		self.pos = p
 		self.graphic.pos = (ir(p[0] - self.collision_radius), ir(p[1] - self.collision_radius))

@@ -1,8 +1,8 @@
-    BUGS
+	BUGS
 
 gm doesn't update everywhere it should
 
-    FEATURES
+	FEATURES
 
 graphics
 sound
@@ -10,6 +10,10 @@ collisions
 draw trajectories
 	calculation is done in Physics.predict_future_psitions
 inputs
+technological advancements
+	satellites to defend yourself
+	homing asteroids
+	force field
 
 	ENHANCEMENTS
 
