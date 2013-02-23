@@ -8,7 +8,7 @@ class GravitySource(object):
 	def get_pos_at_time(time):
 		return self.pos
 
-class Physics(object)
+class Physics(object):
 	def __init__ (self):
 		self.gravity_sources = []
 		self.asteroids = []

@@ -55,4 +55,5 @@ This should not change the state of the world, because it is not guaranteed to
 be called every frame.
 
 """
-        return self.graphics.draw()
+        self.graphics.draw()
+        return True
