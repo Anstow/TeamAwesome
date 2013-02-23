@@ -102,9 +102,13 @@ class Level (World):
 				# TODO: collide with missiles
 				# TODO: collide with force fields
 				collided_with = ast.collide_with_list(es)
-				if collided_with is not None:
+				try:
+					ent = next(collided_with)
+				except StopIteration:
+					pass
+				else:
 					# TODO: collision resolution, this should be done by overriding hit_by_asteroid
-					collided_with.hit_by_asteroid(ast)
+					ent.hit_by_asteroid(ast)
 
 	def add_ast (self, ast):
 		self.entities.append(ast)

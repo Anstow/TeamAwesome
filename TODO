@@ -15,6 +15,7 @@ technological advancements
 	offensive: asteroids; upgrades:
 		size
 		speed
+		fire rate
 	defensive:
 		slightly-homing missiles which don't go very far, used to hit incoming asteroids
 		force field
