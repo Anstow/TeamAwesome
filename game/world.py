@@ -48,7 +48,7 @@ graphics: a gm.GraphicsManager instance used for drawing by default.
         """Draw to the screen.
 
 Returns a flag indicating what changes were made: True if the whole display
-needs to be updated, something falsy if nothing needs to be updated, else a
+needs to be updated, something false if nothing needs to be updated, else a
 list of rects to update the display in.
 
 This should not change the state of the world, because it is not guaranteed to
