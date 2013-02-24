@@ -20,7 +20,7 @@ class Level (World):
 		self.t = 0
 		self.scheduler.add_timeout(self._update_paths, seconds = conf.PATH_UPDATE_TIME)
 		self.scheduler.interp(lambda t: t, self.update_t)
-		bg = gm.Colour(((0, 0), conf.RES), (0, 0, 0))
+		bg = gm.Image((0, 0), 'background.png')
 		self.graphics.add(bg)
 		bg.layer = conf.GRAPHICS_LAYERS['bg']
 		# controls

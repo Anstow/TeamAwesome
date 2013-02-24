@@ -1,4 +1,5 @@
 from math import cos, sin
+from random import randrange
 
 from conf import conf
 from gm import Image
@@ -28,6 +29,8 @@ class Planet (GravitySource):
 	img_ident = ident = 'planet'
 
 	def __init__ (self, world, density, radius, centre, dist, angle):
+		if self.img_ident == 'planet':
+			self.img_ident += str(randrange(3))
 		self.world = world
 		pos = (centre.pos[0] + dist * cos(angle),
 				centre.pos[1] + dist * sin(angle))

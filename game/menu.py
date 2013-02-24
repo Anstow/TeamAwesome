@@ -15,7 +15,7 @@ class Menu( World ):
 		self.num_joysticks = 0
 
 		#Create a background
-		bg = gm.Colour(((0, 0), conf.RES), (0, 0, 0))
+		bg = gm.Image((0, 0), 'background.png')
 		bg.layer = 1
 		self.graphics.add(bg)
 

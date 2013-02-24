@@ -138,13 +138,13 @@ class Conf (object):
 
 	# level generation
 	# sun
-	SUN_DENSITY = 600
-	SUN_RADIUS = 20
+	SUN_DENSITY = 400
+	SUN_RADIUS = 25
 	# npp (non player planet)
 	INNER_PLANET = {
 		'density': 800,
-		'min radius': 5.5,
-		'max radius': 9,
+		'min radius': 5,
+		'max radius': 10,
 		'min sun dist': 125,
 		'max sun dist': 270,
 		'number': 3
@@ -152,7 +152,7 @@ class Conf (object):
 	OUTER_PLANET = {
 		'density': 900,
 		'min radius': 8,
-		'max radius': 15,
+		'max radius': 20,
 		'min sun dist': 330,
 		'max sun dist': 450,
 		'number': 3
