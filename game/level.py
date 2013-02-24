@@ -197,6 +197,29 @@ class Level (World):
 		s_w, s_h = conf.RES
 		assert 2 * pad <= s_w and 2 * pad <= s_h
 		sun = Sun(conf.SUN_DENSITY, conf.SUN_RADIUS, (uniform(pad, s_w - pad), uniform(pad, s_h - pad)))
+		# npps (non player planets)
+		# inner planets
+		planets = []
+		planet_data = conf.INNER_PLANET
+		planet_number= planet_data['number']
+		planet_max_radius = planet_data['max radius']
+		planet_min_radius = planet_data['min radius']
+		if planet_number > 0:
+			planet_dist = planet_data['min sun dist']
+			planet_dist_inc = (planet_data['max sun dist'] - planet_dist)/ planet_number
+			for i in xrange(planet_number):
+				planets.append(Planet(self, planet_data['density'], uniform(planet_min_radius,planet_max_radius), sun, planet_dist + planet_dist_inc * i, uniform(0,6.29)))
+		# outer planets
+		planet_data = conf.OUTER_PLANET
+		planet_number= planet_data['number']
+		planet_max_radius = planet_data['max radius']
+		planet_min_radius = planet_data['min radius']
+		if planet_number > 0:
+			planet_dist = planet_data['min sun dist']
+			planet_dist_inc = (planet_data['max sun dist'] - planet_dist)/ planet_number
+			for i in xrange(planet_number):
+				planets.append(Planet(self, planet_data['density'], uniform(planet_min_radius,planet_max_radius), sun, planet_dist + planet_dist_inc * i, uniform(0,6.29)))
+
 		# players
 		angle = uniform(0, 2 * pi)
 		d_angle = 2 * pi / len(joys)
@@ -209,7 +232,7 @@ class Level (World):
 			else:
 				self.players.append(None)
 		# extra planets
-		planets = [p for p in self.players if p is not None]
+		planets += [p for p in self.players if p is not None]
 
 		asteroids = []
 		self.phys.gravity_sources = [sun] + planets
