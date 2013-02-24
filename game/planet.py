@@ -4,6 +4,7 @@ from conf import conf
 from gm import Image
 from util import ir, Vect
 from physics import GravitySource, GravitySink
+from collisions import CollisionEnt
 
 
 def mk_graphic (obj):
@@ -79,3 +80,56 @@ class Asteroid (GravitySink):
 	def hit_by_asteroid (self, ast):
 		self.world.rm_ast(self)
 		return True
+
+class Shield(CollisionEnt):
+	img_ident = 'shield'
+	ident = 'shield'
+
+	def __init__ (self, player):
+		self.img_ident = 'player{0}'.format(ident)
+		self.owned_by = player
+		self.angle = 0     # position
+		self.size = pi/3   # size / 2 in rad
+		self.image = ("image0", "image1", "image2")
+		self.tech = 0
+		self.thickness = 2
+		self.damage = 0
+
+		### radius fudge factors
+		self.f = 10
+		self.s = 2
+		self.world.scheduler.add_timeout(_self.repair, seconds = 1)
+
+	def _repair (self):
+		damage = max(damage - 1, 0)
+
+	def strength (self):
+		return max(0, self.tech - self.damage)
+
+	def get_radius (self): 
+		strength = self.strength()
+		radius = 0
+		if strength >= 0:
+			radius = self.f + strength * self.s
+		return radius
+			
+	#def draw(self, angle):
+		#pass
+		#strength = self.strength()
+		#if strength >= 0:
+		#   image = self.image[strength] 
+		#   
+
+	def collide_with_list (self, collision_list):
+		r = self.radius
+		a0 = self.angle
+		a1 = clamp_ang(a0 + self.size)
+		p = owned_by.pos
+		for ent in collision_list:
+			ep = ent.pos
+			dif = [ ep[0] - p[0], ep[1] - p[1]]
+			distance = (dif[0]*dif[0] + dif[1]*dif[1])**.5
+			ent_ang = clamp_ang(acos(dif[0] / d_mag))
+			if abs(d - r) > self.thickness and ent is not self:
+				if ent_ang > a0 and ent_ang < a0 + a1:
+					yield ent

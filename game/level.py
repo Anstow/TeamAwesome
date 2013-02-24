@@ -11,7 +11,6 @@ import gm
 from planet import Planet, Sun, Asteroid
 from physics import Physics
 
-=======
 from player import Player
 
 class Level (World):
@@ -125,8 +124,6 @@ class Level (World):
 						self.rm_ast(ast)
 					else:
 						# Firstly collide with everything
-						# TODO: collide with missiles
-						# TODO: collide with force fields
 						collided_with = ast.collide_with_list(es)
 						try:
 							while True:
@@ -137,8 +134,8 @@ class Level (World):
 						except StopIteration:
 							pass
 
-    def num_players(  ):
-        return _self.players.count( not None )
+	def num_players( self ):
+		return self.players.count( not None )
 
 	def add_ast (self, ast):
 		self.entities.append(ast)
