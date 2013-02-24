@@ -30,6 +30,8 @@ class Player (Planet):
 		self._dots = []
 		self._aim_mag = 0
 
+		self.score = 0
+
 	def aim (self, mode, evt):
 		action = mode >= 2
 		v = self.aiming[action]
@@ -73,3 +75,9 @@ class Player (Planet):
 		self._dots = [Dot(p, dot_sfc) for p in self.world.phys.predict_future_positions(self._init_ast(), self.n_dots, conf.PLAYER_DOT_DISTANCE)]
 		self.world.graphics.add(*self._dots)
 
+	def increment_score(self):
+		score += 1
+
+	def hit_by_asteroid(self, asteroid):
+		score -= 1
+		asteroid.player.increment_score()
