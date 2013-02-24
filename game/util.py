@@ -40,8 +40,12 @@ class Vect(list):
 	def __add__ (self, v):
 		return Vect(self[0] + v[0], self[1] + v[1])
 
+	__radd__ = __add__
+
 	def __sub__ (self, v):
 		return Vect(self[0] - v[0], self[1] - v[1])
+
+	__rsub__ = __sub__
 
 	def __iadd__ (self, v):
 		self[0] += v[0]
