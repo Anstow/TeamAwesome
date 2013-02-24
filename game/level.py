@@ -150,5 +150,34 @@ class Level (World):
 		self.graphics.rm(player.graphic)
 		self.players[player.player_ident] = None
 
-	def pause (self):
-		pass
+	def pause (self, *args, **kwargs):
+			conf.GAME.start_world(Pause, self.graphics.surface, kwargs.get('player'))
+
+
+class Pause (World):
+	def __init__ (self, scheduler, evthandler, sfc, player = None):
+		self.player = player
+		World.__init__(self, scheduler, evthandler)
+		evthandler.add_event_handlers({pg.JOYBUTTONDOWN: self._joycb})
+		evthandler.add_key_handlers([
+			(conf.KEYS_BACK, lambda *args: conf.GAME.quit_world(), eh.MODE_ONDOWN),
+			(conf.KEYS_QUIT, lambda *args: conf.GAME.quit_world(2), eh.MODE_ONDOWN)
+		])
+		darken = blank_sfc(conf.RES)
+		darken.fill((0, 0, 0, 180))
+		darken = gm.Image((0, 0), darken)
+		darken.layer = -1
+		self.graphics.add(gm.Image((0, 0), sfc), darken)
+
+	def select (self):
+		c = (255, 255, 255) if self.player is None else conf.P_COLOURS[self.player]
+		text = conf.GAME.render_text('menu', 'Paused\nQ to quit', c, just = 1, line_spacing = conf.MENU_LINE_SPACING)[0]
+		sfc = blank_sfc(conf.RES)
+		position_sfc(text, sfc)
+		img = gm.Image((0, 100), sfc)
+		self.graphics.add(img)
+		img.layer = -2
+
+	def _joycb (self, evt):
+		if (evt.joy == self.player or self.player is None) and evt.button == conf.CONTROLS['pause'][0][1]:
+			conf.GAME.quit_world()

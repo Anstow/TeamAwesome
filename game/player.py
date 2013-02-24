@@ -90,6 +90,7 @@ class Player (Planet):
 		if self.tech < 0:
 			player.world.rm_player(self)
 			if player.world.num_players >= 1:
-				# We should end the game here (I thought it may be a nice ideal to lose points)
+				# We should end the game here (I thought it may be a nice to
+				# lose points or gain points)
 				pass
 		return True
