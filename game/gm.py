@@ -43,8 +43,7 @@ from pygame import Rect
 
 from conf import conf
 from util import ir, convert_sfc, blank_sfc
-from gmdraw import fastdraw
-
+from gmdraw import fastdraw 
 
 def _mk_disjoint (add, rm = []):
     """Make a list of rects disjoint.

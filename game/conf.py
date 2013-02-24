@@ -14,7 +14,7 @@ class Conf (object):
 
 	IDENT = 'game'
 	USE_SAVEDATA = False
-	USE_FONTS = False
+	USE_FONTS = True
 
 	# the Game instance; should only really be used to load media with caching
 	GAME = None
@@ -111,7 +111,7 @@ class Conf (object):
 
 	# text rendering
 	# per-backend, each a {key: value} dict to update Game.fonts with
-	REQUIRED_FONTS = dd({})
+	REQUIRED_FONTS = dd({ "menu": ( "WireOne.ttf", 40 )})
 
 	# physics
 	DEFAULT_TIME_OFFSET = 0.015
@@ -147,6 +147,12 @@ class Conf (object):
 	# gameplay
 	PLAYER_N_DOTS = 12
 	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
+
+	# colours
+	P_COLOURS = [( 0xAC, 0x19, 0x27 ), 
+				 ( 0x0A, 0xAF, 0xE7 ), 
+				 ( 0x27, 0xB6, 0x23 ), 
+				 ( 0xE6, 0xE6, 0x08 ) ]
 
 
 def translate_dd (d):
