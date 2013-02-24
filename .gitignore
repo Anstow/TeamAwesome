@@ -2,3 +2,5 @@ build/*
 game/gmdraw.so
 *.py[co]
 .*.swp
+.vim
+*.vim
