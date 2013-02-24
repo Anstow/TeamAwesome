@@ -1,8 +1,11 @@
-from world import World
-import gm
-from conf import conf
 import pygame
 import pygame.joystick as js
+
+import gm
+
+from level import Level
+from world import World
+from conf import conf
 from ext import evthandler as eh
 from util import blank_sfc, position_sfc
 
@@ -48,6 +51,10 @@ class Menu( World ):
 	#### Event Handlers ####
 
 	def _load_joysticks( self, *args ):
+		#Clear existing state graphics
+		for i in xrange( self.num_joysticks ):
+			self.states[i].clear()
+
 		#Clear current list of joysticks
 		self.joysticks		  = []
 		self.states			  = []
@@ -90,7 +97,7 @@ class Menu( World ):
 			self.states[i].update(self.active_joysticks[i], self.active_players[i] )
 
 		if self._start_game():
-			print "Game started!"
+			conf.GAME.start_world( Level, self.active_players.count( True ) )
 
 	#Check start condition of the game
 	def _start_game( self ):
@@ -104,41 +111,43 @@ class Menu( World ):
 
 		return True
 
+#Readlly quite hacky I'm tired
 class ControllerState:
 	def __init__( self, num, gfx ):
 		self.num = num
 		self.status_text = None
 		self.ready_text = None
-		self.pos = [ 0, 0 ]
+		self.pos = [ 20, 20 ]
+		self.readypos = [ 20, 60 ]
 		self.gfx = gfx
 		if num == 1 or num == 3:
-			self.pos[0] = conf.RES[0] - 100
-		elif num == 2 or num == 3:
-			self.pos[1] = conf.RES[1] - 20
+			self.pos[0] = conf.RES[0] - 150
+			self.readypos[0] = conf.RES[0] - 150
+		if num == 2 or num == 3:
+			self.pos[1] = conf.RES[1] - 90
+			self.readypos[1] = conf.RES[1] - 50
 
-
-	def update( self, active, playing ):
+	def clear( self ):
 		if self.status_text is not None:
-			print "Removing status text"
 			self.gfx.rm( self.status_text )
 		if self.ready_text is not None:
-			self.gfx.rm( self.status_text )
+			self.gfx.rm( self.ready_text )
+
+	def update( self, active, playing ):
+		self.clear()
 
 		if active == True:
-			if playing == True:
-				self.status_text = gm.Image( self.pos,
-					conf.GAME.render_text( "menu", "Player " + str( self.num ),
-						( 0xFF, 0xFF, 0xFF ) )[0] )
-				self.ready_text = gm.Image( self.pos,
+			self.status_text = gm.Image( self.pos,
+				conf.GAME.render_text( "menu", "Player " + str( self.num + 1 ),
+					conf.P_COLOURS[self.num] )[0] )
+			if playing == False:
+				self.ready_text = gm.Image( self.readypos,
 					conf.GAME.render_text( "menu", "Press Start",
 						( 0xFF, 0xFF, 0xFF ) )[0] )
 
 				print "Controller ", self.num, "Active"
 			else: #playing == True
-				self.status_text = gm.Image( self.pos,
-					conf.GAME.render_text( "menu", "Player " + str( self.num ),
-						( 0x00, 0xFF, 0x00 ) )[0] )
-				self.ready_text = gm.Image( self.pos,
+				self.ready_text = gm.Image( self.readypos,
 					conf.GAME.render_text( "menu", "Ready!",
 						( 0x00, 0xFF, 0x00 ) )[0] )
 				print "Controller ", self.num, "Active and playing"

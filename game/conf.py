@@ -147,6 +147,12 @@ class Conf (object):
 	PLAYER_N_DOTS = 10
 	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
 
+	# colours
+	P_COLOURS = [( 0xAC, 0x19, 0x27 ), 
+				 ( 0x0A, 0xAF, 0xE7 ), 
+				 ( 0x27, 0xB6, 0x23 ), 
+				 ( 0xE6, 0xE6, 0x08 ) ]
+
 
 def translate_dd (d):
     if isinstance(d, defaultdict):
