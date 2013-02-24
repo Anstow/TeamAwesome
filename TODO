@@ -5,25 +5,27 @@ gm doesn't update everywhere it should
 	FEATURES
 
 graphics
+	asteroids
+	planets (players + more)
+	weapons + effects
 sound
+	ambient
+	music
+	effects
 collision resolution
+	asteroid: explosion graphics, effects on player
+	other things
 draw trajectories
-	calculation is done in Physics.predict_future_psitions
+	different dot colours for each player
+	stop when reach a grav_source (but collisions are slow)
 inputs
 technological advancements
 	satellites which represent the upgrades you have, can get destroyed (but also defend you)
+	number of dots
 	offensive: asteroids; upgrades:
 		size
-		speed
+		initial speed
 		fire rate
 	defensive:
 		slightly-homing missiles which don't go very far, used to hit incoming asteroids
 		force field
-
-	ENHANCEMENTS
-
-destroy asteroids that go too far out
-module are satellites of planets?
-	when hit are destroyed/damaged
-	if the planet is hit you lose technological advancement
-limit fire rate
