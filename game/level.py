@@ -32,13 +32,18 @@ class Player (Planet):
 		self.aiming_angle = [0, 0]
 		self._fire_last = [0, 0] # (defensive, offensive) - since fire are axes
 		self._dots = []
+		self._aim_mag = 0
 
 	def aim (self, mode, evt):
 		action = mode >= 2
 		v = self.aiming[action]
+		v = list(v)
 		v[mode % 2] = evt.value
 		x, y = v
-		self.aiming_angle[action] = atan2(y, x)
+		if (x * x + y * y) ** .5 >= conf.AIM_THRESHOLD:
+			self.aiming[action] = v
+			self.aiming_angle[action] = atan2(y, x)
+			self._aim_mag = (x * x + y * y) ** .5
 
 	def _init_ast (self):
 		angle = self.aiming_angle[1]
