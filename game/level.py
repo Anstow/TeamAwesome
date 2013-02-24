@@ -13,9 +13,8 @@ from physics import Physics
 
 
 class Dot (gm.Image):
-	def __init__ (self, pos):
-		gm.Image.__init__(self, pos, 'dot.png')
-		self.resize(conf.DOT_RADIUS, conf.DOT_RADIUS)
+	def __init__ (self, pos, sfc):
+		gm.Image.__init__(self, pos, sfc)
 		r = pg.Rect(self.rect)
 		r.center = pos
 		self.rect = r
@@ -41,11 +40,11 @@ class Player (Planet):
 		x, y = v
 		self.aiming_angle[action] = atan2(y, x)
 
-	def _create_asteroid (self):
+	def _init_ast (self):
 		angle = self.aiming_angle[1]
 		pos = self.pos + Vect(conf.ASTEROID_LAUNCH_DIST, 0).rotate(angle)
 		vel = (self.launch_speed * cos(angle), self.launch_speed * sin(angle))
-		return Asteroid(self.world, pos, vel)
+		return (pos, vel)
 
 	def fire (self, mode, evt):
 		last = self._fire_last[mode]
@@ -53,7 +52,8 @@ class Player (Planet):
 		if last < conf.TRIGGER_THRESHOLD and now >= conf.TRIGGER_THRESHOLD:
 			if mode == 1 and self._since_last_launch >= conf.ASTEROID_LAUNCH_GAP:
 				# fire asteroid
-				self.world.add_ast(self._create_asteroid())
+				pos, vel = self._init_ast()
+				self.world.add_ast(Asteroid(self.world, pos, vel))
 				self._since_last_launch = 0
 		self._fire_last[mode] = now
 
@@ -62,16 +62,17 @@ class Player (Planet):
 		self._since_last_launch += dt
 		angle = self.aiming_angle[1]
 
-	def update_path (self):
+	def update_path (self, dot_sfc):
 		# update future path
 		self.world.graphics.rm(*self._dots)
-		self._dots = [Dot(p) for p in self.world.phys.predict_future_positions(self._create_asteroid(), self.n_dots, conf.PLAYER_DOT_DISTANCE)]
+		self._dots = [Dot(p, dot_sfc) for p in self.world.phys.predict_future_positions(self._init_ast(), self.n_dots, conf.PLAYER_DOT_DISTANCE)]
 		self.world.graphics.add(*self._dots)
 
 
 class Level (World):
 	def __init__ (self, scheduler, evthandler, n_players = 1):
 		World.__init__(self, scheduler, evthandler)
+		self._dot_sfc = conf.GAME.img('dot.png', (conf.DOT_RADIUS, conf.DOT_RADIUS))
 		self.t = 0
 		self.scheduler.add_timeout(self._update_paths, seconds = conf.PATH_UPDATE_TIME)
 		self.scheduler.interp(lambda t: t, self.update_t)
@@ -129,8 +130,9 @@ class Level (World):
 		self.collision_detection()
 
 	def _update_paths (self):
+		sfc = self._dot_sfc
 		for p in self.players:
-			p.update_path()
+			p.update_path(sfc)
 		return True
 
 	def collision_detection(self):

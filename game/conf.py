@@ -87,6 +87,7 @@ class Conf (object):
 		#'select': (pg.JOYBUTTONDOWN, 0)
 	}
 	TRIGGER_THRESHOLD = 0
+	AIM_THRESHOLD = .4
 
 	# audio
 	MUSIC_AUTOPLAY = False # just pauses music
@@ -130,7 +131,7 @@ class Conf (object):
 	PATH_UPDATE_TIME = .05
 
 	# level generation
-	SUN_DENSITY = 100
+	SUN_DENSITY = 200
 	SUN_RADIUS = 30
 	PLAYER_PLANET = {
 		'density': 100,
@@ -138,13 +139,13 @@ class Conf (object):
 		'sun dist': 200,
 		'edge dist': 110
 	}
-	ASTEROID_LAUNCH_SPEED = 200
+	ASTEROID_LAUNCH_SPEED = 150
 	ASTEROID_LAUNCH_DIST = 25 # from player
 	ASTEROID_LAUNCH_GAP = 5 # seconds
 	DOT_RADIUS = 2
 
 	# gameplay
-	PLAYER_N_DOTS = 10
+	PLAYER_N_DOTS = 12
 	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
 
 
