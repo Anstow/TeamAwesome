@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from platform import system
 import os
 from os.path import sep, expanduser, join as join_path
@@ -50,7 +52,7 @@ class Conf (object):
 
 	# display
 	WINDOW_ICON = None #IMG_DIR + 'icon.png'
-	WINDOW_TITLE = ''
+	WINDOW_TITLE = '1′'
 	MOUSE_VISIBLE = dd(False) # per-backend
 	FLAGS = 0
 	FULLSCREEN = False

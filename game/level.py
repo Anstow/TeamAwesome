@@ -105,11 +105,18 @@ class Level (World):
 		assert 2 * pad <= s_w and 2 * pad <= s_h
 		sun = Sun(conf.SUN_DENSITY, conf.SUN_RADIUS, (uniform(pad, s_w - pad), uniform(pad, s_h - pad)))
 		# players
-		angle0 = uniform(0, 2 * pi)
+		angle = uniform(0, 2 * pi)
 		d_angle = 2 * pi / len(joys)
-		self.players = [Player(i, self, p_data['density'], p_radius, sun, p_sun_dist, angle0 + i * d_angle) for i in xrange(len(joys))]
+		joy_ids = [j.get_id() for j in joys]
+		self.players = []
+		for i in xrange(4):
+			if i in joy_ids:
+				self.players.append(Player(i, self, p_data['density'], p_radius, sun, p_sun_dist, angle))
+				angle += d_angle
+			else:
+				self.players.append(None)
 		# extra planets
-		planets = list(self.players)
+		planets = [p for p in self.players if p is not None]
 
 		asteroids = []
 		self.phys.gravity_sources = [sun] + planets
@@ -118,9 +125,10 @@ class Level (World):
 
 	def _joycb (self, evt):
 		p = self.players[evt.joy]
-		e_ident = evt.button if evt.type == pg.JOYBUTTONDOWN else evt.axis
-		action, mode = self.controls[evt.type][e_ident]
-		getattr(p, action)(mode, evt)
+		if p is not None:
+			e_ident = evt.button if evt.type == pg.JOYBUTTONDOWN else evt.axis
+			action, mode = self.controls[evt.type][e_ident]
+			getattr(p, action)(mode, evt)
 
 	def update_t (self, t):
 		phys = self.phys
@@ -133,7 +141,8 @@ class Level (World):
 	def _update_paths (self):
 		sfc = self._dot_sfc
 		for i, p in enumerate( self.players ):
-			p.update_path(sfc[i])
+			if p is not None:
+				p.update_path(sfc[i])
 		return True
 
 	def collision_detection(self):
