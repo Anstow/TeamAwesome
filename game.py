@@ -24,7 +24,7 @@ if conf.USE_FONTS:
     from game.ext.fonthandler import Fonts
 from game.util import ir, convert_sfc
 from game.world import World
-from game.level import Level
+from game.menu import Menu
 
 
 def get_world_id (world):
@@ -468,7 +468,7 @@ if __name__ == '__main__':
         else:
             t = conf.DEFAULT_PROFILE_TIME
         fn = conf.PROFILE_STATS_FILE
-        run('Game(Level).run(t)', fn, locals())
+        run('Game(Menu).run(t)', fn, locals())
         Stats(fn).strip_dirs().sort_stats('cumulative').print_stats(50)
         os.unlink(fn)
     else:
@@ -476,6 +476,6 @@ if __name__ == '__main__':
         restarting = True
         while restarting:
             restarting = False
-            Game(Level).run()
+            Game(Menu).run()
 
 pg.quit()
