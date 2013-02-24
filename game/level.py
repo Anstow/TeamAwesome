@@ -77,7 +77,8 @@ class Player (Planet):
 class Level (World):
 	def __init__ (self, scheduler, evthandler, joys):
 		World.__init__(self, scheduler, evthandler)
-		self._dot_sfc = conf.GAME.img('dot.png', (conf.DOT_RADIUS, conf.DOT_RADIUS))
+		self._dot_sfc = [conf.GAME.img('dot{0}.png'.format( i ),
+			(conf.DOT_RADIUS, conf.DOT_RADIUS)) for i in xrange( 4 )]
 		self.t = 0
 		self.scheduler.add_timeout(self._update_paths, seconds = conf.PATH_UPDATE_TIME)
 		self.scheduler.interp(lambda t: t, self.update_t)
@@ -131,8 +132,8 @@ class Level (World):
 
 	def _update_paths (self):
 		sfc = self._dot_sfc
-		for p in self.players:
-			p.update_path(sfc)
+		for i, p in enumerate( self.players ):
+			p.update_path(sfc[i])
 		return True
 
 	def collision_detection(self):
