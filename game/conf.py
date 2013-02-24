@@ -137,22 +137,47 @@ class Conf (object):
 	MENU_LINE_SPACING = 30
 
 	# level generation
-	SUN_DENSITY = 200
-	SUN_RADIUS = 30
+	# sun
+	SUN_DENSITY = 600
+	SUN_RADIUS = 20
+	# npp (non player planet)
+	INNER_PLANET = {
+		'density': 800,
+		'min radius': 5.5,
+		'max radius': 9,
+		'min sun dist': 125,
+		'max sun dist': 270,
+		'number': 3
+	}
+	OUTER_PLANET = {
+		'density': 900,
+		'min radius': 8,
+		'max radius': 15,
+		'min sun dist': 330,
+		'max sun dist': 450,
+		'number': 3
+	}
+	# player
 	PLAYER_PLANET = {
-		'density': 100,
+		'density': 900,
 		'radius': 8,
-		'sun dist': 200,
+		'sun dist': 250,
 		'edge dist': 110
 	}
-	ASTEROID_LAUNCH_SPEED = 150
+	ASTEROID_LAUNCH_SPEED = 300
 	ASTEROID_LAUNCH_DIST = 25 # from player
-	ASTEROID_LAUNCH_GAP = 5 # seconds
+	ASTEROID_LAUNCH_GAP = 1 # seconds
 	DOT_RADIUS = 2
 
 	# gameplay
 	PLAYER_N_DOTS = 12
 	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
+	# asteroid
+	ASTEROID = {
+		'density': 0.8,
+		'min radius': 1,
+		'max radius': 5
+	}
 
 	# colours
 	P_COLOURS = [( 0xAC, 0x19, 0x27 ), 

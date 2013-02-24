@@ -64,9 +64,9 @@ class Asteroid (GravitySink):
 	ident = 'asteroid'
 	img_ident = 'planet'
 
-	def __init__ (self, world, pos, vel, mass = 1, radius = 10):
+	def __init__ (self, world, pos, vel, radius = conf.ASTEROID['max radius'], density = conf.ASTEROID['density']):
 		self.world = world
-		GravitySink.__init__(self, pos, vel, mass, radius)
+		GravitySink.__init__(self, pos, vel, density * radius ** 3, radius)
 		self.graphic = Image((ir(pos[0] - radius), ir(pos[1] - radius)), 'planet.png')
 		self.graphic = mk_graphic(self)
 		position_graphic(self)

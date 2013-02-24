@@ -102,6 +102,7 @@ class Menu( World ):
 
 	#Check start condition of the game
 	def _start_game( self ):
+		#if self.active_players.count( True ) < 1:
 		if self.active_players.count( True ) < 2:
 			return False
 
