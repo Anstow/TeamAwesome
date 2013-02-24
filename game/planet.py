@@ -1,4 +1,4 @@
-from math import cos, sin
+from math import cos, sin, pi
 
 from conf import conf
 from gm import Image
@@ -65,7 +65,7 @@ class Asteroid (GravitySink):
 	ident = 'asteroid'
 	img_ident = 'planet'
 
-	def __init__ (self, world, pos, vel, radius = conf.ASTEROID['max radius'], density = conf.ASTEROID['density']):
+	def __init__ (self, owner, world, pos, vel, radius = conf.ASTEROID['max radius'], density = conf.ASTEROID['density']):
 		self.world = world
 		GravitySink.__init__(self, pos, vel, density * radius ** 3, radius)
 		self.graphic = Image((ir(pos[0] - radius), ir(pos[1] - radius)), 'planet.png')
@@ -82,26 +82,32 @@ class Asteroid (GravitySink):
 		return True
 
 class Shield(CollisionEnt):
-	img_ident = 'shield'
-	ident = 'shield'
+	ident = 'planet'
+	img_ident = 'forcefield'
 
 	def __init__ (self, player):
-		self.img_ident = 'player{0}'.format(ident)
 		self.owned_by = player
 		self.angle = 0     # position
 		self.size = pi/3   # size / 2 in rad
-		self.image = ("image0", "image1", "image2")
 		self.tech = 0
 		self.thickness = 2
 		self.damage = 0
 
+		CollisionEnt.__init__(self, player.pos, conf.SHIELD_RADIUS)
+		self.radius = self.collision_radius
+
 		### radius fudge factors
 		self.f = 10
 		self.s = 2
-		self.world.scheduler.add_timeout(_self.repair, seconds = 1)
+		self.owned_by.world.scheduler.add_timeout(self._repair, seconds = 1)
+		
+		# graphics
+		self.graphic = Image((ir(self.pos[0] - self.radius), ir(self.pos[1] - self.radius)), 'forcefield.png')
+		self.graphic = mk_graphic(self)
+		position_graphic(self)
 
 	def _repair (self):
-		damage = max(damage - 1, 0)
+		self.damage = max(self.damage - 1, 0)
 
 	def strength (self):
 		return max(0, self.tech - self.damage)
@@ -112,13 +118,6 @@ class Shield(CollisionEnt):
 		if strength >= 0:
 			radius = self.f + strength * self.s
 		return radius
-			
-	#def draw(self, angle):
-		#pass
-		#strength = self.strength()
-		#if strength >= 0:
-		#   image = self.image[strength] 
-		#   
 
 	def collide_with_list (self, collision_list):
 		r = self.radius

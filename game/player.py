@@ -5,7 +5,7 @@ from conf import conf
 import gm
 import pygame as pg
 
-from planet import Planet, Asteroid
+from planet import Planet, Asteroid, Shield
 
 class Dot (gm.Image):
 	def __init__ (self, pos, sfc):
@@ -32,7 +32,7 @@ class Player (Planet):
 		# Technology (planet dies if < 0)
 		self.tech = 0
 		self.world.scheduler.add_timeout(self._inc_tech, seconds = 15)
-		self.weapon = Shield(self)
+		#self.weapon = Shield(self)
 		self.shield = Shield(self)
 
 	def aim (self, mode, evt):
@@ -47,7 +47,7 @@ class Player (Planet):
 			self._aim_mag = (x * x + y * y) ** .5
 
 	def _inc_tech (self):
-		tech += 1
+		self.tech += 1
 
 	def _init_ast (self):
 		angle = self.aiming_angle[1]

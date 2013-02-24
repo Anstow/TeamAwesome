@@ -178,6 +178,8 @@ class Conf (object):
 		'min radius': 1,
 		'max radius': 5
 	}
+	# shield
+	SHIELD_RADIUS = 10
 
 	# colours
 	P_COLOURS = [( 0xAC, 0x19, 0x27 ), 
