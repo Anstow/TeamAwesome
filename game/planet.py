@@ -35,11 +35,7 @@ class Planet (GravitySource):
 		centre = centre.pos
 
 		def get_pos (dt):
-			cx, cy = centre
-			x, y = self.pos - centre
-			c = cos(freq * dt)
-			s = sin(freq * dt)
-			return Vect(cx + c * x - s * y, cy + s * x + c * y)
+			return self.pos.rotate(freq * dt, centre)
 
 		self.get_pos_at_time = get_pos
 		GravitySource.__init__(self, pos, density * radius ** 3, radius)
@@ -68,7 +64,8 @@ class Asteroid (GravitySink):
 	ident = 'asteroid'
 	img_ident = 'planet'
 
-	def __init__ (self, pos, vel, mass = 1, radius = 10):
+	def __init__ (self, world, pos, vel, mass = 1, radius = 10):
+		self.world = world
 		GravitySink.__init__(self, pos, vel, mass, radius)
 		self.graphic = Image((ir(pos[0] - radius), ir(pos[1] - radius)), 'planet.png')
 		self.graphic = mk_graphic(self)
@@ -78,3 +75,7 @@ class Asteroid (GravitySink):
 		GravitySink.move(self, phys, t)
 		x, y = self.pos
 		position_graphic(self)
+
+	def hit_by_asteroid (self, ast):
+		self.world.rm_ast(self)
+		return True

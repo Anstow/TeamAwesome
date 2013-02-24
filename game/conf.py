@@ -115,28 +115,37 @@ class Conf (object):
 	# physics
 	DEFAULT_TIME_OFFSET = 0.015
 	GRAVITY_CONSTANT = 1
+	ASTEROID_DESTROY_DIST = 300 # outside screen borders
 
 	# graphics
 	GRAPHICS_LAYERS = {
 		'bg': 0,
 		'sun': -1,
 		'planet': -2,
-		'asteroid': -3
+		'asteroid': -3,
+		'dot': -4
 	}
 	IMG_OFFSETS = dd(0, sun = 65, player0 = 8)
+	AIM_ANGLE_CHANGE_UPDATE = .08
+	PATH_UPDATE_TIME = .05
 
 	# level generation
 	SUN_DENSITY = 100
 	SUN_RADIUS = 30
 	PLAYER_PLANET = {
-		'density': 10,
+		'density': 100,
 		'radius': 8,
 		'sun dist': 200,
 		'edge dist': 110
 	}
-	ASTEROID_LAUNCH_SPEED = 100
-	ASTEROID_LAUNCH_DIST = 10 # from player
+	ASTEROID_LAUNCH_SPEED = 200
+	ASTEROID_LAUNCH_DIST = 25 # from player
 	ASTEROID_LAUNCH_GAP = 5 # seconds
+	DOT_RADIUS = 2
+
+	# gameplay
+	PLAYER_N_DOTS = 10
+	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
 
 
 def translate_dd (d):

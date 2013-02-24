@@ -5,21 +5,34 @@ from ext import evthandler as eh
 import pygame as pg
 
 from conf import conf
+from util import Vect
 from world import World
 import gm
 from planet import Planet, Sun, Asteroid
 from physics import Physics
 
 
+class Dot (gm.Image):
+	def __init__ (self, pos):
+		gm.Image.__init__(self, pos, 'dot.png')
+		self.resize(conf.DOT_RADIUS, conf.DOT_RADIUS)
+		r = pg.Rect(self.rect)
+		r.center = pos
+		self.rect = r
+		self.layer = conf.GRAPHICS_LAYERS['dot']
+
+
 class Player (Planet):
 	def __init__ (self, ident, *args):
 		self.img_ident = 'player{0}'.format(ident)
+		Planet.__init__(self, *args)
 		self.launch_speed = conf.ASTEROID_LAUNCH_SPEED
 		self._since_last_launch = conf.ASTEROID_LAUNCH_GAP
+		self.n_dots = conf.PLAYER_N_DOTS
 		self.aiming = [[0, 0], [0, 0]] # (defensive, offensive) (x, y)
 		self.aiming_angle = [0, 0]
 		self._fire_last = [0, 0] # (defensive, offensive) - since fire are axes
-		Planet.__init__(self, *args)
+		self._dots = []
 
 	def aim (self, mode, evt):
 		action = mode >= 2
@@ -28,27 +41,39 @@ class Player (Planet):
 		x, y = v
 		self.aiming_angle[action] = atan2(y, x)
 
+	def _create_asteroid (self):
+		angle = self.aiming_angle[1]
+		pos = self.pos + Vect(conf.ASTEROID_LAUNCH_DIST, 0).rotate(angle)
+		vel = (self.launch_speed * cos(angle), self.launch_speed * sin(angle))
+		return Asteroid(self.world, pos, vel)
+
 	def fire (self, mode, evt):
 		last = self._fire_last[mode]
 		now = evt.value
 		if last < conf.TRIGGER_THRESHOLD and now >= conf.TRIGGER_THRESHOLD:
 			if mode == 1 and self._since_last_launch >= conf.ASTEROID_LAUNCH_GAP:
 				# fire asteroid
-				angle = self.aiming_angle[mode]
-				a = Asteroid(self.pos, (self.launch_speed * cos(angle), self.launch_speed * sin(angle)))
-				self.world.add_ast(a)
-				self._since_last_launch -= conf.ASTEROID_LAUNCH_GAP
+				self.world.add_ast(self._create_asteroid())
+				self._since_last_launch = 0
 		self._fire_last[mode] = now
 
 	def move (self, phys, dt):
 		Planet.move(self, phys, dt)
 		self._since_last_launch += dt
+		angle = self.aiming_angle[1]
+
+	def update_path (self):
+		# update future path
+		self.world.graphics.rm(*self._dots)
+		self._dots = [Dot(p) for p in self.world.phys.predict_future_positions(self._create_asteroid(), self.n_dots, conf.PLAYER_DOT_DISTANCE)]
+		self.world.graphics.add(*self._dots)
 
 
 class Level (World):
 	def __init__ (self, scheduler, evthandler, n_players = 1):
 		World.__init__(self, scheduler, evthandler)
 		self.t = 0
+		self.scheduler.add_timeout(self._update_paths, seconds = conf.PATH_UPDATE_TIME)
 		self.scheduler.interp(lambda t: t, self.update_t)
 		bg = gm.Colour(((0, 0), conf.RES), (0, 0, 0))
 		self.graphics.add(bg)
@@ -103,21 +128,34 @@ class Level (World):
 			e.move(phys, dt)
 		self.collision_detection()
 
+	def _update_paths (self):
+		for p in self.players:
+			p.update_path()
+		return True
+
 	def collision_detection(self):
 		es = self.entities
-		for ast in es:
-			if isinstance(ast, Asteroid):
-				# Firstly collide with everthing
-				# TODO: collide with missiles
-				# TODO: collide with force fields
-				collided_with = ast.collide_with_list(es)
-				try:
-					ent = next(collided_with)
-				except StopIteration:
-					pass
-				else:
-					# TODO: collision resolution, this should be done by overriding hit_by_asteroid
-					ent.hit_by_asteroid(ast)
+		dist = conf.ASTEROID_DESTROY_DIST * 2
+		in_bdy = pg.Rect((0, 0), conf.RES).inflate(dist, dist).collidepoint
+		for ast in list(es):
+			# might have been removed earlier in the loop
+			if ast in es:
+				if isinstance(ast, Asteroid):
+					if not in_bdy(ast.pos):
+						self.rm_ast(ast)
+					else:
+						# Firstly collide with everything
+						# TODO: collide with missiles
+						# TODO: collide with force fields
+						collided_with = ast.collide_with_list(es)
+						try:
+							while True:
+								ent = next(collided_with)
+								if ent.hit_by_asteroid(ast):
+									self.rm_ast(ast)
+									break
+						except StopIteration:
+							pass
 
 	def add_ast (self, ast):
 		self.entities.append(ast)
@@ -125,4 +163,4 @@ class Level (World):
 
 	def rm_ast (self, ast):
 		self.entities.remove(ast)
-		self.graphics.remove(ast.graphic)
+		self.graphics.rm(ast.graphic)
