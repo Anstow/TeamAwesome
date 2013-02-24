@@ -26,38 +26,42 @@ class Physics(object):
 		self.gravity_sources = []
 
 	def calculate_accel_offset(self, pos, time):
-		accel = Vect(0,0)
+		accel = Vect(0, 0)
+		grav = conf.GRAVITY_CONSTANT
 		for g in self.gravity_sources:
 			tmp_pos = g.get_pos_at_time(time)
 			dp = tmp_pos - pos
 			dist_2 = abs(dp)
 			assert dist_2 != 0
-			accel += dp * (conf.GRAVITY_CONSTANT * g.mass /(dist_2**1.5))
+			accel += dp * (grav * g.mass / (dist_2 ** 1.5))
 		return accel
 
-	def predict_future_positions(self, g_sink, no_positions, position_time_offset):
+	def predict_future_positions(self, g_sink, n_ps, n_steps):
 		"""Predicts the future positions.
 
-predict_future_positions(g_sink, no_positions, position_time_offset)
+predict_future_positions(g_sink, n_ps, pos_dt)
 
-g_sink: The sink to predict the future of
-no_positions: The number of positions to compute
-position_time_offset: The time offset between positions, this will work better
-                      if its a multiple of conf.DEFAULT_TIME_OFFSET
+g_sink: The sink to predict the future of; can also be
+		(initial_position, initial_velocity)
+n_ps: The number of positions to compute
+n_steps: the multiple of conf.DEFAULT_TIME_OFFSET to space out positions by
 
 """
-		assert position_time_offset >= conf.DEFAULT_TIME_OFFSET
-		pos_list = []
-		current_pos = g_sink.vel
-		current_vel = g_sink.vel
-		current_time = 0
-		current_n=0
-		while current_n<no_positions:
-			while current_time<no_positions*position_time_offset:
-				tmp_acc_t = conf.DEFAULT_TIME_OFFSET * phys.calculate_accel_offset(current_pos, time_offset)
-				current_pos += conf.DEFAULT_TIME_OFFSET * (vel + 0.5 * tmp_acc_t)
-				self.vel += tmp_acc_t
-				current_time+=conf.DEFAULT_TIME_OFFSET
-			current_n+=1
-			pos_list += current_pos
-		return pos_list
+		assert pos_dt >= conf.DEFAULT_TIME_OFFSET
+		ps = []
+		if isinstance(g_sink, GravitySink):
+			p = g_sink.pos
+			v = g_sink.vel
+		else:
+			p, v = g_sink
+		calc_dt = conf.DEFAULT_TIME_OFFSET
+		da = self.calculate_accel_offset
+		t = 0
+		for n_done in xrange(n_ps):
+			for i in xrange(n_steps):
+				acc_t = calc_dt * da(p, t)
+				p += calc_dt * (v + .5 * acc_t)
+				v += acc_t
+				t += calc_dt
+			ps.append(Vect(p))
+		return ps

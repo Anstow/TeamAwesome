@@ -16,13 +16,15 @@ collision resolution
 	asteroid: explosion graphics, effects on player
 	other things
 draw trajectories
-	calculation is done in Physics.predict_future_psitions
+	different dot colours for each player
+	stop when reach a grav_source (but collisions are slow)
 inputs
 technological advancements
 	satellites which represent the upgrades you have, can get destroyed (but also defend you)
+	number of dots
 	offensive: asteroids; upgrades:
 		size
-		speed
+		initial speed
 		fire rate
 	defensive:
 		slightly-homing missiles which don't go very far, used to hit incoming asteroids
