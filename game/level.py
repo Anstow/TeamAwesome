@@ -151,7 +151,7 @@ class Level (World):
 		self.players[player.player_ident] = None
 
 	def pause (self, *args, **kwargs):
-			conf.GAME.start_world(Pause, self.graphics.surface, kwargs.get('player'))
+		conf.GAME.start_world(Pause, self.graphics.surface, kwargs.get('player'))
 
 
 class Pause (World):
