@@ -1,7 +1,7 @@
 TeamAwesome
 ===========
 
-David, David, David (Joe) and David's (Jamie) game, for the Warwick February 48 hour competition. With team time. 
+David, David, David (Joe) and David's (Jamie) game, for the Warwick February 48 hour competition. With theme time. 
 
 We are using David's (Joe) game library:
 
