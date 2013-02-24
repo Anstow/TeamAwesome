@@ -1,4 +1,5 @@
 from util import Vect
+from conf import conf
 
 class CollisionEnt(object):
 	def __init__ (self, pos, collision_radius):
@@ -16,4 +17,5 @@ class CollisionEnt(object):
 				yield ent
 
 	def hit_by_asteroid (self, asteroid):
+		conf.GAME.play_snd('boom')
 		return True # by default, destroy the asteroid

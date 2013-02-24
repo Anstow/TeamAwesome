@@ -46,7 +46,7 @@ class Conf (object):
 	# data paths
 	DATA_DIR = ''
 	IMG_DIR = DATA_DIR + 'img' + sep
-	SOUND_DIR = DATA_DIR + 'sound' + sep
+	SOUND_DIR = DATA_DIR + 'snd' + sep
 	MUSIC_DIR = DATA_DIR + 'music' + sep
 	FONT_DIR = DATA_DIR + 'font' + sep
 
@@ -94,8 +94,8 @@ class Conf (object):
 	AIM_THRESHOLD = .4
 
 	# audio
-	MUSIC_AUTOPLAY = False # just pauses music
-	MUSIC_VOLUME = dd(.5) # per-backend
+	MUSIC_AUTOPLAY = True # just pauses music
+	MUSIC_VOLUME = dd(.7) # per-backend
 	SOUND_VOLUME = .5
 	EVENT_ENDMUSIC = pg.USEREVENT
 	SOUND_VOLUMES = dd(1)
