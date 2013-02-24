@@ -75,7 +75,7 @@ class Player (Planet):
 
 
 class Level (World):
-	def __init__ (self, scheduler, evthandler, n_players = 1):
+	def __init__ (self, scheduler, evthandler, joys):
 		World.__init__(self, scheduler, evthandler)
 		self._dot_sfc = conf.GAME.img('dot.png', (conf.DOT_RADIUS, conf.DOT_RADIUS))
 		self.t = 0
@@ -85,11 +85,6 @@ class Level (World):
 		self.graphics.add(bg)
 		bg.layer = conf.GRAPHICS_LAYERS['bg']
 		# controls
-		js = []
-		for i in xrange(n_players):
-			j = pg.joystick.Joystick(i)
-			j.init()
-			js.append(j)
 		# {type: {id: (action, action_mode)}}
 		self.controls = controls = {}
 		for action, evts in conf.CONTROLS.iteritems():
@@ -110,8 +105,8 @@ class Level (World):
 		sun = Sun(conf.SUN_DENSITY, conf.SUN_RADIUS, (uniform(pad, s_w - pad), uniform(pad, s_h - pad)))
 		# players
 		angle0 = uniform(0, 2 * pi)
-		d_angle = 2 * pi / n_players
-		self.players = [Player(i, self, p_data['density'], p_radius, sun, p_sun_dist, angle0 + i * d_angle) for i in xrange(n_players)]
+		d_angle = 2 * pi / len(joys)
+		self.players = [Player(i, self, p_data['density'], p_radius, sun, p_sun_dist, angle0 + i * d_angle) for i in xrange(len(joys))]
 		# extra planets
 		planets = list(self.players)
 

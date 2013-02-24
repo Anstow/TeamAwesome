@@ -12,8 +12,7 @@ from util import blank_sfc, position_sfc
 class Menu( World ):
 	def __init__( self, scheduler, evthandler ):
 		World.__init__( self, scheduler, evthandler )
-		self.num_players = 1;
-		self.num_joysticks = 0;
+		self.num_joysticks = 0
 
 		#Create a background
 		bg = gm.Colour(((0, 0), conf.RES), (0, 0, 0))
@@ -97,7 +96,7 @@ class Menu( World ):
 			self.states[i].update(self.active_joysticks[i], self.active_players[i] )
 
 		if self._start_game():
-			conf.GAME.start_world( Level, self.active_players.count( True ) )
+			conf.GAME.start_world( Level, [self.joysticks[i] for i in xrange(4) if self.active_players[i]] )
 
 	#Check start condition of the game
 	def _start_game( self ):
@@ -121,11 +120,11 @@ class ControllerState:
 		self.readypos = [ 20, 60 ]
 		self.gfx = gfx
 		if num == 1 or num == 3:
-			self.pos[0] = conf.RES[0] - 150
-			self.readypos[0] = conf.RES[0] - 150
+			self.pos[0] = conf.RES[0] - 128
+			self.readypos[0] = conf.RES[0] - 128
 		if num == 2 or num == 3:
-			self.pos[1] = conf.RES[1] - 90
-			self.readypos[1] = conf.RES[1] - 50
+			self.pos[1] = conf.RES[1] - 100
+			self.readypos[1] = conf.RES[1] - 60
 
 	def clear( self ):
 		if self.status_text is not None:
@@ -145,12 +144,10 @@ class ControllerState:
 					conf.GAME.render_text( "menu", "Press Start",
 						( 0xFF, 0xFF, 0xFF ) )[0] )
 
-				print "Controller ", self.num, "Active"
 			else: #playing == True
 				self.ready_text = gm.Image( self.readypos,
 					conf.GAME.render_text( "menu", "Ready!",
 						( 0x00, 0xFF, 0x00 ) )[0] )
-				print "Controller ", self.num, "Active and playing"
 
 			self.gfx.add( self.ready_text )
 			self.gfx.add( self.status_text )
@@ -158,5 +155,4 @@ class ControllerState:
 			self.status_text = gm.Image( self.pos,
 				conf.GAME.render_text( "menu", "Press A",
 					( 0x99, 0x99, 0x99 ) )[0] )
-			print "Controller ", self.num, "Inactive"
 			self.gfx.add( self.status_text )

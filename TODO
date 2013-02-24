@@ -6,6 +6,7 @@ memory leak
 	FEATURES
 
 graphics
+	background (menu and game)
 	asteroids
 	planets (players + more)
 	weapons + effects
@@ -17,12 +18,11 @@ sound
 handle divide by zero in acceleration calculation
 collision resolution
 	asteroid: explosion graphics, effects on player
-	other things
 draw trajectories
 	different dot colours for each player
 	stop when reach a grav_source (but collisions are slow)
-inputs
 technological advancements
+	other inputs (conf.CONTROLS)
 	satellites which represent the upgrades you have, can get destroyed (but also defend you)
 	number of dots
 	offensive: asteroids; upgrades:
