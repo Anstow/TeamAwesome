@@ -76,8 +76,9 @@ class Player (Planet):
 		self.world.graphics.add(*self._dots)
 
 	def increment_score(self):
-		score += 1
+		self.score += 1
 
 	def hit_by_asteroid(self, asteroid):
-		score -= 1
-		asteroid.player.increment_score()
+		Planet.hit_by_asteroid(self, asteroid)
+		self.score -= 1
+		#asteroid.player.increment_score()

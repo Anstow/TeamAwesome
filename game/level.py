@@ -140,6 +140,12 @@ class Level (World):
 		self.graphics.add(ast.graphic)
 
 	def rm_ast (self, ast):
+		r = ast.collision_radius
+		img = gm.Image(ast.pos - (r, r), 'explosion.png')
+		img.resize(30, 30)
+		img.layer = conf.GRAPHICS_LAYERS['asteroid']
+		self.graphics.add(img)
+		self.scheduler.add_timeout(self.graphics.rm, img, seconds = 2)
 		self.entities.remove(ast)
 		self.graphics.rm(ast.graphic)
 
