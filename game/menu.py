@@ -26,6 +26,7 @@ class Menu( World ):
 		])
 
 		evthandler.add_event_handlers( { pygame.JOYBUTTONDOWN: self._handle_joystick } )
+        self.scheduler.add_timeout( self._load_joysticks, 5 )
 
 	def select( self ):
 		###Load menu text images

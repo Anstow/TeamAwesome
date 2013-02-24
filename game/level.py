@@ -20,6 +20,63 @@ class Dot (gm.Image):
 		self.rect = r
 		self.layer = conf.GRAPHICS_LAYERS['dot']
 
+class Shield( CollisionEnt ):
+    def __init__( self, player ):
+		self.img = 'shield.png'.format(ident)
+        self.owner = player
+        self.angle = 0     # position
+        self.size = pi/3   # size / 2 in rad
+        self.image = ( "image0", "image1", "image2" )
+        self.tech = 0
+        self.thickness = 2
+        self.damage = 0
+
+        ### radius fudge factors
+        self.f = 10
+        self.s = 2
+        self.world.scheduler.add_timeout( _self.repair, seconds = 1 )
+
+    def _repair( self ):
+        damage = max( damage - 1, 0 )
+
+    def strength( self ):
+        return max( 0, self.tech - self.damage )
+
+    def get_radius( self ): 
+        strength = self.strength(  )
+        radius = 0
+
+        if strength >= 0:
+            radius = self.f + strength * self.s
+
+        return radius
+            
+    def draw( self, angle )
+        #strength = self.strength(  )
+        #if strength >= 0:
+        #   image = self.image[strength] 
+        #   
+        pass
+
+    def 
+
+    def collide_with_list ( self, collision_list ):
+        r = self.radius()
+        a0 = self.angle()
+        a1 = clamp_ang( a0 + self.size )
+        p = owner.pos
+
+		for ent in collision_list:
+			ep = ent.pos
+            dif = [ ep[0] - p[0], 
+			      ep[1] - p[1]]
+            distance = ( dif[0]*dif[0] + dif[1]*dif[1] )**.5
+            ent_ang = clamp_ang( acos( dif[0] / d_mag ) )
+
+            if abs( d - r ) > self.thickness and ent is not self:
+                if ent_ang > a0 and ent_ang < a0 + a1:
+                    yield ent
+
 
 class Player (Planet):
 	def __init__ (self, ident, *args):
@@ -35,6 +92,12 @@ class Player (Planet):
 		self._dots = []
 		self._aim_mag = 0
 
+        # Technology ( planet dies if < 0 )
+        self.tech = 0
+        self.world.scheduler.add_timeout( self._inc_tech, seconds = 15 )
+        self.weapon = Shield( self )
+        self.shield = Shield( self )
+
 	def aim (self, mode, evt):
 		action = mode >= 2
 		v = self.aiming[action]
@@ -45,6 +108,9 @@ class Player (Planet):
 			self.aiming[action] = v
 			self.aiming_angle[action] = atan2(y, x)
 			self._aim_mag = (x * x + y * y) ** .5
+
+    def _inc_tech ( self ):
+        tech += 1
 
 	def _init_ast (self):
 		angle = self.aiming_angle[1]
@@ -68,15 +134,34 @@ class Player (Planet):
 		self.world.pause(player = self.player_ident)
 
 	def move (self, phys, dt):
+        #Actual movement
 		Planet.move(self, phys, dt)
 		self._since_last_launch += dt
 		angle = self.aiming_angle[1]
+
+        #A mockery of programming practice
+
 
 	def update_path (self, dot_sfc):
 		# update future path
 		self.world.graphics.rm(*self._dots)
 		self._dots = [Dot(p, dot_sfc) for p in self.world.phys.predict_future_positions(self._init_ast(), self.n_dots, conf.PLAYER_DOT_DISTANCE)]
 		self.world.graphics.add(*self._dots)
+
+    def hit_by_asteroid( self, ast ):
+        self.tech -= 1
+        if self.tech < 0:
+            player.world.rm_player( self )
+            if world
+        return True
+
+
+
+
+
+
+# Level
+
 
 
 class Level (World):
@@ -179,6 +264,9 @@ class Level (World):
 						except StopIteration:
 							pass
 
+    def num_players(  ):
+        return _self.players.count( not None )
+
 	def add_ast (self, ast):
 		self.entities.append(ast)
 		self.graphics.add(ast.graphic)
@@ -192,34 +280,5 @@ class Level (World):
 		self.graphics.rm(player.graphic)
 		self.players[player.player_ident] = None
 
-	def pause (self, *args, **kwargs):
-		conf.GAME.start_world(Pause, self.graphics.surface, kwargs.get('player'))
-
-
-class Pause (World):
-	def __init__ (self, scheduler, evthandler, sfc, player = None):
-		self.player = player
-		World.__init__(self, scheduler, evthandler)
-		evthandler.add_event_handlers({pg.JOYBUTTONDOWN: self._joycb})
-		evthandler.add_key_handlers([
-			(conf.KEYS_BACK, lambda *args: conf.GAME.quit_world(), eh.MODE_ONDOWN),
-			(conf.KEYS_QUIT, lambda *args: conf.GAME.quit_world(2), eh.MODE_ONDOWN)
-		])
-		darken = blank_sfc(conf.RES)
-		darken.fill((0, 0, 0, 180))
-		darken = gm.Image((0, 0), darken)
-		darken.layer = -1
-		self.graphics.add(gm.Image((0, 0), sfc), darken)
-
-	def select (self):
-		c = (255, 255, 255) if self.player is None else conf.P_COLOURS[self.player]
-		text = conf.GAME.render_text('menu', 'Paused\nQ to quit', c, just = 1, line_spacing = conf.MENU_LINE_SPACING)[0]
-		sfc = blank_sfc(conf.RES)
-		position_sfc(text, sfc)
-		img = gm.Image((0, 100), sfc)
-		self.graphics.add(img)
-		img.layer = -2
-
-	def _joycb (self, evt):
-		if (evt.joy == self.player or self.player is None) and evt.button == conf.CONTROLS['pause'][0][1]:
-			conf.GAME.quit_world()
+	def pause (self):
+		pass
