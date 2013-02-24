@@ -15,11 +15,12 @@ sound
 	ambient
 	music
 	effects
+other planets
+pause menu/quit to menu
 handle divide by zero in acceleration calculation
 collision resolution
 	asteroid: explosion graphics, effects on player
 draw trajectories
-	different dot colours for each player
 	stop when reach a grav_source (but collisions are slow)
 technological advancements
 	other inputs (conf.CONTROLS)

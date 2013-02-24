@@ -23,6 +23,7 @@ class Dot (gm.Image):
 
 class Player (Planet):
 	def __init__ (self, ident, *args):
+		self.ident = ident
 		self.img_ident = 'player{0}'.format(ident)
 		Planet.__init__(self, *args)
 		self.launch_speed = conf.ASTEROID_LAUNCH_SPEED
@@ -94,6 +95,9 @@ class Level (World):
 			for mode, (e_type, e_id) in enumerate(evts):
 				controls.setdefault(e_type, {})[e_id] = (action, mode)
 		evthandler.add_event_handlers(dict.fromkeys(controls, self._joycb))
+		evthandler.add_key_handlers([
+			(conf.KEYS_BACK, self.pause, eh.MODE_ONDOWN)
+		])
 
 		# sun
 		self.phys = Physics()
@@ -176,3 +180,11 @@ class Level (World):
 	def rm_ast (self, ast):
 		self.entities.remove(ast)
 		self.graphics.rm(ast.graphic)
+
+	def rm_player (self, player):
+		self.entities.remove(player)
+		self.graphics.rm(player.graphic)
+		self.players[player.ident] = None
+
+	def pause (self):
+		pass
