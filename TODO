@@ -16,7 +16,6 @@ sound
 	music
 	effects
 other planets
-pause menu/quit to menu
 handle divide by zero in acceleration calculation
 collision resolution
 	asteroid: explosion graphics, effects on player

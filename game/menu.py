@@ -20,8 +20,10 @@ class Menu( World ):
 		self.graphics.add(bg)
 
 		#Register event listeners
-		evthandler.add_key_handlers(
-				[( conf.KEYS_NEXT, self._load_joysticks, eh.MODE_ONDOWN )] )
+		evthandler.add_key_handlers([
+			(conf.KEYS_NEXT, self._load_joysticks, eh.MODE_ONDOWN),
+			(conf.KEYS_BACK, lambda *args: conf.GAME.quit_world(), eh.MODE_ONDOWN)
+		])
 
 		evthandler.add_event_handlers( { pygame.JOYBUTTONDOWN: self._handle_joystick } )
 
@@ -34,7 +36,7 @@ class Menu( World ):
 		#Create centred text image
 		text_surface = conf.GAME.render_text( "menu",
 			"Orbits\nPress Enter to reload controllers",
-			( 0xFF, 0xFF, 0xFF ), just = 1, line_spacing = 30)[0]
+			( 0xFF, 0xFF, 0xFF ), just = 1, line_spacing = conf.MENU_LINE_SPACING)[0]
 
 		#Blit text to blank surface
 		position_sfc( text_surface, blank )

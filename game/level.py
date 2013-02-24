@@ -5,7 +5,7 @@ from ext import evthandler as eh
 import pygame as pg
 
 from conf import conf
-from util import Vect
+from util import Vect, blank_sfc, position_sfc
 from world import World
 import gm
 from planet import Planet, Sun, Asteroid
@@ -23,7 +23,7 @@ class Dot (gm.Image):
 
 class Player (Planet):
 	def __init__ (self, ident, *args):
-		self.ident = ident
+		self.player_ident = ident
 		self.img_ident = 'player{0}'.format(ident)
 		Planet.__init__(self, *args)
 		self.launch_speed = conf.ASTEROID_LAUNCH_SPEED
@@ -62,6 +62,10 @@ class Player (Planet):
 				self.world.add_ast(Asteroid(self.world, pos, vel))
 				self._since_last_launch = 0
 		self._fire_last[mode] = now
+
+	def pause (self, mode, evt):
+		# horrible, but I like it somehow
+		self.world.pause(player = self.player_ident)
 
 	def move (self, phys, dt):
 		Planet.move(self, phys, dt)
@@ -131,8 +135,10 @@ class Level (World):
 		p = self.players[evt.joy]
 		if p is not None:
 			e_ident = evt.button if evt.type == pg.JOYBUTTONDOWN else evt.axis
-			action, mode = self.controls[evt.type][e_ident]
-			getattr(p, action)(mode, evt)
+			controls = self.controls[evt.type]
+			if e_ident in controls:
+				action, mode = controls[e_ident]
+				getattr(p, action)(mode, evt)
 
 	def update_t (self, t):
 		phys = self.phys
@@ -184,7 +190,36 @@ class Level (World):
 	def rm_player (self, player):
 		self.entities.remove(player)
 		self.graphics.rm(player.graphic)
-		self.players[player.ident] = None
+		self.players[player.player_ident] = None
 
-	def pause (self):
-		pass
+	def pause (self, *args, **kwargs):
+		conf.GAME.start_world(Pause, self.graphics.surface, kwargs.get('player'))
+
+
+class Pause (World):
+	def __init__ (self, scheduler, evthandler, sfc, player = None):
+		self.player = player
+		World.__init__(self, scheduler, evthandler)
+		evthandler.add_event_handlers({pg.JOYBUTTONDOWN: self._joycb})
+		evthandler.add_key_handlers([
+			(conf.KEYS_BACK, lambda *args: conf.GAME.quit_world(), eh.MODE_ONDOWN),
+			(conf.KEYS_QUIT, lambda *args: conf.GAME.quit_world(2), eh.MODE_ONDOWN)
+		])
+		darken = blank_sfc(conf.RES)
+		darken.fill((0, 0, 0, 180))
+		darken = gm.Image((0, 0), darken)
+		darken.layer = -1
+		self.graphics.add(gm.Image((0, 0), sfc), darken)
+
+	def select (self):
+		c = (255, 255, 255) if self.player is None else conf.P_COLOURS[self.player]
+		text = conf.GAME.render_text('menu', 'Paused\nQ to quit', c, just = 1, line_spacing = conf.MENU_LINE_SPACING)[0]
+		sfc = blank_sfc(conf.RES)
+		position_sfc(text, sfc)
+		img = gm.Image((0, 100), sfc)
+		self.graphics.add(img)
+		img.layer = -2
+
+	def _joycb (self, evt):
+		if (evt.joy == self.player or self.player is None) and evt.button == conf.CONTROLS['pause'][0][1]:
+			conf.GAME.quit_world()

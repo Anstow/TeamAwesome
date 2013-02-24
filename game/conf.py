@@ -81,12 +81,14 @@ class Conf (object):
 	KEYS_UP = (pg.K_UP, pg.K_w, pg.K_z, pg.K_COMMA)
 	KEYS_DOWN = (pg.K_DOWN, pg.K_s, pg.K_o)
 	KEYS_DIRN = (KEYS_LEFT, KEYS_UP, KEYS_RIGHT, KEYS_DOWN)
+	KEYS_QUIT = (pg.K_q, pg.K_x)
 	# controllers
 	CONTROLS = {
 		'aim': ((pg.JOYAXISMOTION, 0), (pg.JOYAXISMOTION, 1), (pg.JOYAXISMOTION, 3), (pg.JOYAXISMOTION, 4)), # defensive, offensive
 		'fire': ((pg.JOYAXISMOTION, 2), (pg.JOYAXISMOTION, 5)),
+		'pause': ((pg.JOYBUTTONDOWN, 7),),
 		#'scroll': ((pg.JOYBUTTONDOWN, 4), (pg.JOYBUTTONDOWN, 5)),
-		#'select': (pg.JOYBUTTONDOWN, 0)
+		#'select': ((pg.JOYBUTTONDOWN, 0),)
 	}
 	TRIGGER_THRESHOLD = 0
 	AIM_THRESHOLD = .4
@@ -119,6 +121,7 @@ class Conf (object):
 	DEFAULT_TIME_OFFSET = 0.015
 	GRAVITY_CONSTANT = 1
 	ASTEROID_DESTROY_DIST = 300 # outside screen borders
+	FORCEFIELD_ANGLE = 70 # degrees
 
 	# graphics
 	GRAPHICS_LAYERS = {
@@ -131,6 +134,7 @@ class Conf (object):
 	IMG_OFFSETS = dd(0, sun = 65, player0 = 8)
 	AIM_ANGLE_CHANGE_UPDATE = .08
 	PATH_UPDATE_TIME = .05
+	MENU_LINE_SPACING = 30
 
 	# level generation
 	SUN_DENSITY = 200
