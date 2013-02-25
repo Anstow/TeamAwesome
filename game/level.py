@@ -12,6 +12,7 @@ from planet import Planet, Sun, Asteroid
 from physics import Physics
 from player import Player
 
+
 class Level (World):
 	def __init__ (self, scheduler, evthandler, joys):
 		World.__init__(self, scheduler, evthandler)

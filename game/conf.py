@@ -162,7 +162,7 @@ class Conf (object):
 		'density': 900,
 		'radius': 8,
 		'sun dist': 250,
-		'edge dist': 110
+		'edge dist': 100
 	}
 	ASTEROID_LAUNCH_SPEED = 300
 	ASTEROID_LAUNCH_DIST = 25 # from player

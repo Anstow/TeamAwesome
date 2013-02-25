@@ -47,7 +47,6 @@ n_ps: The number of positions to compute
 n_steps: the multiple of conf.DEFAULT_TIME_OFFSET to space out positions by
 
 """
-		assert pos_dt >= conf.DEFAULT_TIME_OFFSET
 		ps = []
 		if isinstance(g_sink, GravitySink):
 			p = g_sink.pos
