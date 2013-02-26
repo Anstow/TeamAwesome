@@ -38,7 +38,14 @@ class Planet (GravitySource):
 		centre = centre.pos
 
 		def get_pos (dt):
-			return self.pos.rotate(freq * dt, centre)
+			x, y = self.pos
+			cx, cy = centre
+			x -= cx
+			y -= cy
+			angle = freq * dt
+			c = cos(angle)
+			s = sin(angle)
+			return (cx + c * x - s * y, cy + s * x + c * y)
 
 		self.get_pos_at_time = get_pos
 		GravitySource.__init__(self, pos, density * radius ** 3, radius)

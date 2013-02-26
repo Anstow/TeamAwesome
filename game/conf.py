@@ -95,8 +95,8 @@ class Conf (object):
 
 	# audio
 	MUSIC_AUTOPLAY = True # just pauses music
-	MUSIC_VOLUME = dd(.7) # per-backend
-	SOUND_VOLUME = .5
+	MUSIC_VOLUME = dd(.8) # per-backend
+	SOUND_VOLUME = .8
 	EVENT_ENDMUSIC = pg.USEREVENT
 	SOUND_VOLUMES = dd(1)
 	# generate SOUNDS = {ID: num_sounds}
@@ -159,8 +159,8 @@ class Conf (object):
 	}
 	# player
 	PLAYER_PLANET = {
-		'density': 900,
-		'radius': 8,
+		'density': 300,
+		'radius': 12,
 		'sun dist': 250,
 		'edge dist': 100
 	}
@@ -174,9 +174,9 @@ class Conf (object):
 	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
 	# asteroid
 	ASTEROID = {
-		'density': 0.8,
+		'density': 0.8, # not sure why they have a density
 		'min radius': 1,
-		'max radius': 5
+		'max radius': 7 # only this is actually used, not sure why
 	}
 
 	# colours
