@@ -35,4 +35,4 @@ Licensing
 
 Source code is available under the GPL version 3 (included).
 
-Music 'Space Fighter Loop' (music/spacey.ogg) is by Kevin MacLeod, available under the Creative Commons Attribution 3.0 license.
+Music 'Space Fighter Loop' (music/space fight.ogg) is by Kevin MacLeod, available under the Creative Commons Attribution 3.0 license.

@@ -144,10 +144,10 @@ class Conf (object):
 	INNER_PLANET = {
 		'density': 800,
 		'min radius': 5,
-		'max radius': 10,
-		'min sun dist': 125,
+		'max radius': 7,
+		'min sun dist': 185,
 		'max sun dist': 270,
-		'number': 3
+		'number': 1
 	}
 	OUTER_PLANET = {
 		'density': 900,
@@ -174,9 +174,9 @@ class Conf (object):
 	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
 	# asteroid
 	ASTEROID = {
-		'density': 0.8, # not sure why they have a density
+		'density': 0.8,
 		'min radius': 1,
-		'max radius': 7 # only this is actually used, not sure why
+		'max radius': 7
 	}
 
 	# colours
