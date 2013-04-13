@@ -14,15 +14,17 @@ Dependencies
 Running
 -------
 
-To run from source, you must first compile.  This process requires GNU Make or equivalent, and header files for SDL and Pygame must be available on the system.  Just run
+To run from source, you must first compile.  This process requires GNU Make or equivalent or the version of Visual whatever-it's-called that was used to compile your Python version, and header files for SDL and Pygame must be available on the system.  Just run
 
     make
+
+On Windows, this requires the command-line compiler ('cl') to be on your path, and assumes that SDL.h is in the directory 'sdl_include' above this directory (horrible, I know).
 
 Now, on systems with a sh-compatible shell, do
 
     ./run
 
-On other systems (Windows, for example), run game.py with your Python 2 executable.
+On other systems (Windows, for example), run run.py with your Python 2 executable.
 
 Controls
 --------
