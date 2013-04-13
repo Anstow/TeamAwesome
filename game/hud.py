@@ -26,23 +26,23 @@ class PlayerHud:
 		self.clear()
 
 		if active == True:
-			self.status_text = gm.Image( self.pos,
+			self.status_text = gm.Graphic(
 				conf.GAME.render_text( "menu", "Player " + str( self.num + 1 ),
-					conf.P_COLOURS[self.num] )[0] )
+					conf.P_COLOURS[self.num] )[0], self.pos )
 			if playing == False:
-				self.ready_text = gm.Image( self.readypos,
+				self.ready_text = gm.Graphic(
 					conf.GAME.render_text( "menu", "Press Start",
-						( 0xFF, 0xFF, 0xFF ) )[0] )
+						( 0xFF, 0xFF, 0xFF ) )[0], self.readypos )
 
 			else: #playing == True
-				self.ready_text = gm.Image( self.readypos,
+				self.ready_text = gm.Graphic(
 					conf.GAME.render_text( "menu", "Ready!",
-						( 0x00, 0xFF, 0x00 ) )[0] )
+						( 0x00, 0xFF, 0x00 ) )[0], self.readypos )
 
 			self.gfx.add( self.ready_text )
 			self.gfx.add( self.status_text )
 		else: #active == False
-			self.status_text = gm.Image( self.pos,
+			self.status_text = gm.Graphic(
 				conf.GAME.render_text( "menu", "Press A",
-					( 0x99, 0x99, 0x99 ) )[0] )
+					( 0x99, 0x99, 0x99 ) )[0], self.pos )
 			self.gfx.add( self.status_text )

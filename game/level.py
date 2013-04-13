@@ -5,7 +5,7 @@ from ext import evthandler as eh
 import pygame as pg
 
 from conf import conf
-from util import Vect, blank_sfc, position_sfc
+from util import Vect
 from world import World
 import gm
 from planet import Planet, Sun, Asteroid
@@ -21,9 +21,8 @@ class Level (World):
 		self.t = 0
 		self.scheduler.add_timeout(self._update_paths, seconds = conf.PATH_UPDATE_TIME)
 		self.scheduler.interp(lambda t: t, self.update_t)
-		bg = gm.Image((0, 0), 'background.png')
-		self.graphics.add(bg)
-		bg.layer = conf.GRAPHICS_LAYERS['bg']
+		self.graphics.add(gm.Graphic('background.png',
+									 layer = conf.GRAPHICS_LAYERS['bg']))
 		# controls
 		# {type: {id: (action, action_mode)}}
 		self.controls = controls = {}
@@ -142,9 +141,8 @@ class Level (World):
 
 	def rm_ast (self, ast):
 		r = ast.collision_radius
-		img = gm.Image(ast.pos - (r, r), 'explosion.png')
-		img.resize(30, 30)
-		img.layer = conf.GRAPHICS_LAYERS['asteroid']
+		img = gm.Graphic('explosion.png', ast.pos - (r, r),
+						 conf.GRAPHICS_LAYERS['asteroid']).resize(30, 30)
 		self.graphics.add(img)
 		self.scheduler.add_timeout(self.graphics.rm, img, seconds = 2)
 		self.entities.remove(ast)
@@ -168,20 +166,14 @@ class Pause (World):
 			(conf.KEYS_BACK, lambda *args: conf.GAME.quit_world(), eh.MODE_ONDOWN),
 			(conf.KEYS_QUIT, lambda *args: conf.GAME.quit_world(2), eh.MODE_ONDOWN)
 		])
-		darken = blank_sfc(conf.RES)
-		darken.fill((0, 0, 0, 180))
-		darken = gm.Image((0, 0), darken)
-		darken.layer = -1
-		self.graphics.add(gm.Image((0, 0), sfc), darken)
+		self.graphics.add(gm.Graphic(sfc), gm.Colour((0, 0, 0, 180), ((0, 0), conf.RES), -1))
 
 	def select (self):
 		c = (255, 255, 255) if self.player is None else conf.P_COLOURS[self.player]
 		text = conf.GAME.render_text('menu', 'Paused\nQ to quit', c, just = 1, line_spacing = conf.MENU_LINE_SPACING)[0]
-		sfc = blank_sfc(conf.RES)
-		position_sfc(text, sfc)
-		img = gm.Image((0, 100), sfc)
-		self.graphics.add(img)
-		img.layer = -2
+		text = gm.Graphic(text, (0, 100), -2)
+		self.graphics.add(text)
+		text.align()
 
 	def _joycb (self, evt):
 		if (evt.joy == self.player or self.player is None) and evt.button == conf.CONTROLS['pause'][0][1]:

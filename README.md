@@ -27,7 +27,6 @@ On other systems (Windows, for example), run game.py with your Python 2 executab
 Controls
 --------
 
-F11, alt + enter: toggle fullscreen
 F10: minimise
 
 Licensing

@@ -171,7 +171,7 @@ class Conf (object):
 
 	# gameplay
 	PLAYER_N_DOTS = 12
-	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET	
+	PLAYER_DOT_DISTANCE = 5 # multiple of DEFAULT_TIME_OFFSET
 	# asteroid
 	ASTEROID = {
 		'density': 0.8,

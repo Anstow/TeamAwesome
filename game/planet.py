@@ -2,18 +2,18 @@ from math import cos, sin
 from random import randrange
 
 from conf import conf
-from gm import Image
+from gm import Graphic
 from util import ir, Vect
 from physics import GravitySource, GravitySink
 
 
 def mk_graphic (obj):
-	graphic = Image((0, 0), obj.img_ident + '.png')
+	graphic = Graphic(obj.img_ident + '.png',
+					  layer = conf.GRAPHICS_LAYERS[obj.ident])
 	w = graphic.w
 	offset = conf.IMG_OFFSETS[obj.img_ident]
 	scale = 2 * float(obj.collision_radius) / (w - 2 * offset)
-	graphic.rescale(scale, scale)
-	graphic.layer = conf.GRAPHICS_LAYERS[obj.ident]
+	graphic.rescale_both(scale)
 	obj.img_offset = ir(scale * offset)
 	return graphic
 
@@ -77,7 +77,8 @@ class Asteroid (GravitySink):
 	def __init__ (self, world, pos, vel, radius = conf.ASTEROID['max radius'], density = conf.ASTEROID['density']):
 		self.world = world
 		GravitySink.__init__(self, pos, vel, density * radius ** 3, radius)
-		self.graphic = Image((ir(pos[0] - radius), ir(pos[1] - radius)), 'asteroid.png')
+		self.graphic = Graphic('asteroid.png',
+							   (ir(pos[0] - radius), ir(pos[1] - radius)))
 		self.graphic = mk_graphic(self)
 		position_graphic(self)
 

@@ -53,18 +53,25 @@ int set_add (int *arr, int n, int x) {
 
 PyObject* mk_disjoint (PyObject* add, PyObject* rm) {
     // both arguments are [pygame.Rect]
+    int n_rects[2], n_edges[2], i, j, k, l, row0, row1, col0, col1, in_rect,
+        r_i, r_left, w, h;
+    PyRectObject** rects[2];
+    GAME_Rect r;
+    int* edges[2], * grid;
+    PyObject* r_o, * rs;
     // turn into arrays
     add = PySequence_Fast(add, "expected list"); // NOTE: ref[+1]
     rm = PySequence_Fast(rm, "expected list"); // NOTE: ref[+2]
-    int n_rects[2] = {PySequence_Fast_GET_SIZE(add),
-                      PySequence_Fast_GET_SIZE(rm)};
-    PyRectObject** rects[2] = {(PyRectObject**) PySequence_Fast_ITEMS(add),
-                               (PyRectObject**) PySequence_Fast_ITEMS(rm)};
+    n_rects[0] = PySequence_Fast_GET_SIZE(add);
+    n_rects[1] = PySequence_Fast_GET_SIZE(rm);
+    rects[0] = (PyRectObject**) PySequence_Fast_ITEMS(add);
+    rects[1] = (PyRectObject**) PySequence_Fast_ITEMS(rm);
     // get edges
-    int n_edges[2] = {0, 0}, i, j, k;
-    GAME_Rect r;
+    n_edges[0] = 0;
+    n_edges[1] = 0;
     i = 2 * (n_rects[0] + n_rects[1]); // max number of edges
-    int* edges[2] = {PyMem_New(int, i), PyMem_New(int, i)}; // NOTE: alloc[+1]
+    edges[0] = PyMem_New(int, i);
+    edges[1] = PyMem_New(int, i); // NOTE: alloc[+1]
     for (i = 0; i < 2; i++) { // rects
         for (j = 0; j < n_rects[i]; j++) { // add|rm
             r = rects[i][j]->r;
@@ -80,9 +87,8 @@ PyObject* mk_disjoint (PyObject* add, PyObject* rm) {
     // generate grid of (rows of) subrects and mark contents
     // each has 2 if add, has no 1 if rm
     i = (n_edges[0] - 1) * (n_edges[1] - 1);
-    int* grid = PyMem_New(int, i); // NOTE: alloc[+2]
+    grid = PyMem_New(int, i); // NOTE: alloc[+2]
     for (j = 0; j < i; j++) grid[j] = 1;
-    int row0, row1, col0, col1, l;
     for (i = 0; i < 2; i++) { // rects
         for (j = 0; j < n_rects[i]; j++) { // add|rm
             r = rects[i][j]->r;
@@ -102,21 +108,47 @@ PyObject* mk_disjoint (PyObject* add, PyObject* rm) {
             }
         }
     }
-    PyObject* r_o;
     // generate subrects
-    PyObject* rs = PyList_New(0);
+    rs = PyList_New(0);
+    in_rect = 0;
     for (i = 0; i < n_edges[1] - 1; i++) { // rows
         for (j = 0; j < n_edges[0] - 1; j++) { // cols
-            if (grid[(n_edges[0] - 1) * i + j] == 3) { // add and not rm
-                k = edges[0][j];
-                l = edges[1][i];
+            if (in_rect && i != r_i) {
+                // on a different row: rect ended
+                in_rect = 0;
+                k = edges[1][r_i];
                 // NOTE: ref[+3]
-                r_o = PyRect_New4(k, l, edges[0][j + 1] - k,
-                                  edges[1][i + 1] - l);
+                r_o = PyRect_New4(r_left, k, edges[0][n_edges[0] - 1] - r_left,
+                                  edges[1][r_i + 1] - k);
+                PyList_Append(rs, r_o);
+                Py_DECREF(r_o); // NOTE: ref[-3]
+            }
+            if (grid[(n_edges[0] - 1) * i + j] == 3) { // add and not rm
+                if (!in_rect) {
+                    in_rect = 1;
+                    r_i = i;
+                    r_left = edges[0][j];
+                }
+            } else if (in_rect) {
+                // rect ended
+                in_rect = 0;
+                k = edges[1][r_i];
+                // NOTE: ref[+3]
+                r_o = PyRect_New4(r_left, k, edges[0][j] - r_left,
+                                  edges[1][r_i + 1] - k);
                 PyList_Append(rs, r_o);
                 Py_DECREF(r_o); // NOTE: ref[-3]
             }
         }
+    }
+    if (in_rect) {
+        // last rect ended
+        k = edges[1][r_i];
+        // NOTE: ref[+3]
+        r_o = PyRect_New4(r_left, k, edges[0][n_edges[0] - 1] - r_left,
+                          edges[1][r_i + 1] - k);
+        PyList_Append(rs, r_o);
+        Py_DECREF(r_o); // NOTE: ref[-3]
     }
     // cleanup
     PyMem_Free(grid); // NOTE: alloc[-2]
@@ -133,17 +165,20 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
     // [obj], pygame.Surface, {obj: set(Graphic)}, [pygame.Rect]
     // and layers is sorted
     PyObject* layers_in, * sfc, * graphics_in, * dirty;
+    PyObject** layers, *** graphics, ** gs, * g, * g_dirty, * g_rect, * r_o,
+            ** graphics_obj, * tmp, * pre_draw, * clip, * dbl_tmp[2], * rtn,
+            * opaque_in, * dirty_opaque, * l_dirty_opaque, ** dirty_by_layer,
+            * rs, * draw_in, * draw;
+    char* dbl[4] = {"was_visible", "visible", "_last_postrot_rect",
+                    "_postrot_rect"};
+    int n_layers, * n_graphics, i, j, k, l, n, n_dirty, r_new, r_good;
+    PyRectObject* r, * tmp_r;
     if (!PyArg_UnpackTuple(args, "fastdraw", 4, 4, &layers_in, &sfc,
                            &graphics_in, &dirty))
         return NULL;
 
-    PyObject** layers, *** graphics, ** gs, * g, * g_dirty, * g_rect, * r_o,
-            ** graphics_obj, * tmp;
-    char* dbl[4] = {"was_visible", "visible", "last_rect", "_rect"};
-    PyObject* clip = PyString_FromString("clip"); // NOTE: ref[+1]
-    PyObject* dbl_tmp[2];
-    int n_layers, * n_graphics;
-    int i, j, k, l, n;
+    pre_draw = PyString_FromString("_pre_draw"); // NOTE: ref[+1a]
+    clip = PyString_FromString("clip"); // NOTE: ref[+1b]
     // get arrays of layers, graphics and sizes
     // NOTE: ref[+2]
     layers_in = PySequence_Fast(layers_in, "layers: expected sequence");
@@ -166,8 +201,9 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
         gs = graphics[i];
         for (j = 0; j < n_graphics[i]; j++) { // gs
             g = gs[j];
+            PyObject_CallMethodObjArgs(g, pre_draw, NULL);
             // NOTE: ref[+4] (list)
-            g_dirty = PyObject_GetAttrString(g, "dirty");
+            g_dirty = PyObject_GetAttrString(g, "_dirty");
             for (k = 0; k < 2; k++) // last/current
                 // NOTE: ref[+5]
                 dbl_tmp[k] = PyObject_GetAttrString(g, dbl[k]);
@@ -175,12 +211,13 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
                 // visiblity changed since last draw: set dirty everywhere
                 Py_DECREF(g_dirty); // NOTE: ref[-4]
                 g_dirty = PyList_New(1); // NOTE: ref[+4]
-                g_rect = PyObject_GetAttrString(g, "_rect"); // NOTE: ref[+6]
+                // NOTE: ref[+6]
+                g_rect = PyObject_GetAttrString(g, "_postrot_rect");
                 PyList_SET_ITEM(g_dirty, 0, g_rect); // NOTE: ref[-6]
-                PyObject_SetAttrString(g, "dirty", g_dirty);
+                PyObject_SetAttrString(g, "_dirty", g_dirty);
             }
             n = PyList_GET_SIZE(g_dirty);
-            for (k = 0; k < 2; k++) {
+            for (k = 0; k < 2; k++) { // last/current
                 if (dbl_tmp[k] == Py_True) {
                     // NOTE: ref[+6] (pygame.Rect)
                     g_rect = PyObject_GetAttrString(g, dbl[k + 2]);
@@ -205,20 +242,16 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
     }
 
     // only have something to do if dirty is non-empty
-    PyObject* rtn = Py_False;
+    rtn = Py_False;
     Py_INCREF(rtn); // since we're (possibly) returning it
-    int n_dirty, r_new, r_good;
     n_dirty = PyList_GET_SIZE(dirty);
     if (PyList_GET_SIZE(dirty) == 0) {
         goto end;
     }
 
-    PyObject* opaque_in = PyString_FromString("opaque_in"); // NOTE: ref[+4]
-    PyObject* dirty_opaque = PyList_New(0); // NOTE: ref[+5]
-    PyObject* l_dirty_opaque;
-    PyRectObject* r, * tmp_r;
-    // NOTE: alloc[+4]
-    PyObject** dirty_by_layer = PyMem_New(PyObject*, n_layers);
+    opaque_in = PyString_FromString("opaque_in"); // NOTE: ref[+4]
+    dirty_opaque = PyList_New(0); // NOTE: ref[+5]
+    dirty_by_layer = PyMem_New(PyObject*, n_layers); // NOTE: alloc[+4]
     for (i = 0; i < n_layers; i++) { // graphics
         gs = graphics[i];
         n = n_graphics[i];
@@ -230,7 +263,8 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
             r_good = 1;
             for (k = 0; k < n; k++) { // gs
                 g = gs[k];
-                g_rect = PyObject_GetAttrString(g, "_rect"); // NOTE: ref[+7]
+                // NOTE: ref[+7]
+                g_rect = PyObject_GetAttrString(g, "_postrot_rect");
                 if (r_new) tmp_r = r;
                 // NOTE: ref[+8]
                 r = (PyRectObject*)
@@ -259,8 +293,7 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
         Py_DECREF(l_dirty_opaque); // NOTE: ref[-6] ref[-7+6]
     }
 
-    PyObject* rs, * draw_in;
-    PyObject* draw = PyString_FromString("draw"); // NOTE: ref[+7]
+    draw = PyString_FromString("_draw"); // NOTE: ref[+7]
     // redraw in dirty rects
     for (i = n_layers - 1; i >= 0; i--) { // layers
         rs = dirty_by_layer[i];
@@ -270,7 +303,8 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
             g = gs[j];
             tmp = PyObject_GetAttrString(g, "visible"); // NOTE: ref[+8]
             if (tmp == Py_True) {
-                g_rect = PyObject_GetAttrString(g, "_rect"); // NOTE: ref[+9]
+                // NOTE: ref[+9]
+                g_rect = PyObject_GetAttrString(g, "_postrot_rect");
                 draw_in = PyList_New(0); // NOTE: ref[+10]
                 for (k = 0; k < n; k++) { // rs
                     r = (PyRectObject*) PyList_GET_ITEM(rs, k);
@@ -289,7 +323,7 @@ PyObject* fastdraw (PyObject* self, PyObject* args) {
             }
             Py_DECREF(tmp); // ref[-8]
             tmp = PyList_New(0); // NOTE: ref[+8]
-            PyObject_SetAttrString(g, "dirty", tmp);
+            PyObject_SetAttrString(g, "_dirty", tmp);
             Py_DECREF(tmp); // NOTE: ref[-8]
         }
     }
@@ -317,7 +351,8 @@ end:
     PyMem_Free(n_graphics); // NOTE: alloc[-2]
     PyMem_Free(graphics_obj); // NOTE: alloc[-1]
     Py_DECREF(layers_in); // NOTE: ref[-2]
-    Py_DECREF(clip); // NOTE: ref[-1]
+    Py_DECREF(clip); // NOTE: ref[-1b]
+    Py_DECREF(pre_draw); // NOTE: ref[-1a]
     return rtn;
 }
 
@@ -326,7 +361,7 @@ PyMethodDef methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
-PyMODINIT_FUNC initgmdraw (void) {
+PyMODINIT_FUNC init_gm (void) {
     import_pygame_rect();
-    Py_InitModule("gmdraw", methods);
+    Py_InitModule("_gm", methods);
 }

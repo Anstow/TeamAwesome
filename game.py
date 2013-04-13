@@ -9,6 +9,7 @@ if d: # else current dir
     os.chdir(d)
 
 import pygame as pg
+from pygame.display import update as update_display
 from pygame.time import wait
 if os.name == 'nt':
     # for Windows freeze support
@@ -428,11 +429,13 @@ volume: float to scale volume by.
                 self._update_again = False
                 self.world.update()
         drawn = self.world.draw()
-        # update display
         if drawn is True:
-            pg.display.flip()
+            update_display()
         elif drawn:
-            pg.display.update(drawn)
+            if len(drawn) > 60: # empirical - faster to update everything
+                update_display()
+            else:
+                update_display(drawn)
         return True
 
     # running

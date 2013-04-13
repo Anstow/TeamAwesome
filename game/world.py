@@ -34,7 +34,7 @@ graphics: a gm.GraphicsManager instance used for drawing by default.
     def __init__ (self, scheduler, evthandler):
         self.scheduler = scheduler
         self.evthandler = evthandler
-        self.graphics = gm.GraphicsManager()
+        self.graphics = gm.GraphicsManager(scheduler)
 
     def select (self):
         """Called when this becomes the active world."""
@@ -55,5 +55,4 @@ This should not change the state of the world, because it is not guaranteed to
 be called every frame.
 
 """
-        self.graphics.draw()
-        return True
+        return self.graphics.draw()

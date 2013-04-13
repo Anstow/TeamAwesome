@@ -7,9 +7,9 @@ import pygame as pg
 
 from planet import Planet, Asteroid
 
-class Dot (gm.Image):
-	def __init__ (self, pos, sfc):
-		gm.Image.__init__(self, pos, sfc)
+class Dot (gm.Graphic):
+	def __init__ (self, sfc, pos):
+		gm.Graphic.__init__(self, sfc, pos)
 		r = pg.Rect(self.rect)
 		r.center = pos
 		self.rect = r
@@ -72,7 +72,7 @@ class Player (Planet):
 	def update_path (self, dot_sfc):
 		# update future path
 		self.world.graphics.rm(*self._dots)
-		self._dots = [Dot(p, dot_sfc) for p in self.world.phys.predict_future_positions(self._init_ast(), self.n_dots, conf.PLAYER_DOT_DISTANCE)]
+		self._dots = [Dot(dot_sfc, p) for p in self.world.phys.predict_future_positions(self._init_ast(), self.n_dots, conf.PLAYER_DOT_DISTANCE)]
 		self.world.graphics.add(*self._dots)
 
 	def increment_score(self):

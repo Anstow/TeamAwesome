@@ -7,7 +7,6 @@ from level import Level
 from world import World
 from conf import conf
 from ext import evthandler as eh
-from util import blank_sfc, position_sfc
 
 class Menu( World ):
 	def __init__( self, scheduler, evthandler ):
@@ -15,9 +14,7 @@ class Menu( World ):
 		self.num_joysticks = 0
 
 		#Create a background
-		bg = gm.Image((0, 0), 'background.png')
-		bg.layer = 1
-		self.graphics.add(bg)
+		self.graphics.add(gm.Graphic('background.png', layer = 1))
 
 		#Register event listeners
 		evthandler.add_key_handlers([
@@ -30,22 +27,19 @@ class Menu( World ):
 	def select( self ):
 		###Load menu text images
 
-		#Create blank surface with screen size
-		blank = blank_sfc( conf.RES )
-
 		#Create centred text image
 		text_surface = conf.GAME.render_text( "menu",
 			"Orbits\nPress Enter to reload controllers",
 			( 0xFF, 0xFF, 0xFF ), just = 1, line_spacing = conf.MENU_LINE_SPACING)[0]
 
-		#Blit text to blank surface
-		position_sfc( text_surface, blank )
-
 		#Store image version of blitted surface
-		self.text = gm.Image( ( 0, 0 ), blank )
+		self.text = gm.Graphic( text_surface )
 
 		#Add image to graphics manager draw list
 		self.graphics.add( self.text )
+
+		#Centre image on the screen
+		self.text.align()
 
 		self._load_joysticks()
 
@@ -139,23 +133,23 @@ class ControllerState:
 		self.clear()
 
 		if active == True:
-			self.status_text = gm.Image( self.pos,
+			self.status_text = gm.Graphic(
 				conf.GAME.render_text( "menu", "Player " + str( self.num + 1 ),
-					conf.P_COLOURS[self.num] )[0] )
+					conf.P_COLOURS[self.num] )[0], self.pos )
 			if playing == False:
-				self.ready_text = gm.Image( self.readypos,
+				self.ready_text = gm.Graphic(
 					conf.GAME.render_text( "menu", "Press Start",
-						( 0xFF, 0xFF, 0xFF ) )[0] )
+						( 0xFF, 0xFF, 0xFF ) )[0], self.readypos )
 
 			else: #playing == True
-				self.ready_text = gm.Image( self.readypos,
+				self.ready_text = gm.Graphic(
 					conf.GAME.render_text( "menu", "Ready!",
-						( 0x00, 0xFF, 0x00 ) )[0] )
+						( 0x00, 0xFF, 0x00 ) )[0], self.readypos )
 
 			self.gfx.add( self.ready_text )
 			self.gfx.add( self.status_text )
 		else: #active == False
-			self.status_text = gm.Image( self.pos,
+			self.status_text = gm.Graphic(
 				conf.GAME.render_text( "menu", "Press A",
-					( 0x99, 0x99, 0x99 ) )[0] )
+					( 0x99, 0x99, 0x99 ) )[0], self.pos )
 			self.gfx.add( self.status_text )

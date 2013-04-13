@@ -1,5 +1,5 @@
 build/*
-game/gmdraw.so
+game/_gm.so
 *.py[co]
 .*.swp
 .vim
