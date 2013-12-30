@@ -29,7 +29,14 @@ On other systems (Windows, for example), run run.py with your Python 2 executabl
 Controls
 --------
 
-F10: minimise
+Play with gamepads (configured for Xbox 360).
+
+pause/unpause: start
+aim: right A-stick
+fire: RT
+
+pause/unpause: escape, backspace
+minimise: F10
 
 Licensing
 ---------
@@ -37,3 +44,5 @@ Licensing
 Source code is available under the GPL version 3 (included).
 
 Music 'Space Fighter Loop' (music/space fight.ogg) is by Kevin MacLeod, available under the Creative Commons Attribution 3.0 license.
+
+Font 'Wire One' (font/WireOne.ttf) is by Alexei Vanyashin and Gayaneh Bagdasaryan, available under the Open Font License version 1.1.
