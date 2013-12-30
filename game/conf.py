@@ -84,13 +84,17 @@ class Conf (object):
 	KEYS_QUIT = (pg.K_q, pg.K_x)
 	# controllers
 	CONTROLS = {
-		'aim': ((pg.JOYAXISMOTION, 0), (pg.JOYAXISMOTION, 1), (pg.JOYAXISMOTION, 3), (pg.JOYAXISMOTION, 4)), # defensive, offensive
-		'fire': ((pg.JOYAXISMOTION, 2), (pg.JOYAXISMOTION, 5)),
+		'aim': ( # defensive, offensive
+            ((pg.JOYAXISMOTION, 0), (pg.JOYAXISMOTION, 1), (pg.JOYAXISMOTION, 4), (pg.JOYAXISMOTION, 3))
+            if system() == 'Windows' else
+            ((pg.JOYAXISMOTION, 0), (pg.JOYAXISMOTION, 1), (pg.JOYAXISMOTION, 3), (pg.JOYAXISMOTION, 4))
+        ),
+		'fire': ((pg.JOYAXISMOTION, 2), (pg.JOYAXISMOTION, 2 if system() == 'Windows' else 5)),
 		'pause': ((pg.JOYBUTTONDOWN, 7),),
 		#'scroll': ((pg.JOYBUTTONDOWN, 4), (pg.JOYBUTTONDOWN, 5)),
 		#'select': ((pg.JOYBUTTONDOWN, 0),)
 	}
-	TRIGGER_THRESHOLD = 0
+	TRIGGER_THRESHOLD = .5 if system() == 'Windows' else 0
 	AIM_THRESHOLD = .4
 
 	# audio

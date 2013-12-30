@@ -1,3 +1,5 @@
+from platform import system
+is_win = system() == 'Windows'
 from math import cos, sin, atan2, pi
 from util import Vect, blank_sfc, position_sfc
 from conf import conf
@@ -52,6 +54,8 @@ class Player (Planet):
 	def fire (self, mode, evt):
 		last = self._fire_last[mode]
 		now = evt.value
+		if is_win:
+			now *= -1
 		if last < conf.TRIGGER_THRESHOLD and now >= conf.TRIGGER_THRESHOLD:
 			if mode == 1 and self._since_last_launch >= conf.ASTEROID_LAUNCH_GAP:
 				# fire asteroid
